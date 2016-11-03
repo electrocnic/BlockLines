@@ -45,12 +45,13 @@ public class BlockLinesCommands extends CommandBase {
                 "- /bl redo - Will redo the last drawing\n" +
                 "- /bl quality <circle|ellipse> <value|auto> - Will set the quality of the ellipse or circle.\n" +
                 this.addSpaces("") + "Low quality is fast, but can result in leaks. Auto will automatically set the quality.\n" +
-                "- /bl mode <circle|ellipse> [0|1|2|3|4|m] -\n" +
+                "- /bl mode <circle|ellipse> [0|1|2|3|4|5|m] -\n" +
                 this.addSpaces("") + "0: A circle/ellipse will be drawn.\n" +
                 this.addSpaces("") + "1: A filled circle/ellipse will be drawn.\n" +
                 this.addSpaces("") + "2: Only the part between the selected blocks will be drawn.\n" +
                 this.addSpaces("") + "3: Only the part outside the selected blocks will be drawn.\n" +
                 this.addSpaces("") + "4: Only the first segment between selection 1 and selection 2 will be drawn.\n" +
+                this.addSpaces("") + "5: The circle will be drawn with thick lines.\n" +
                 this.addSpaces("") + "m: Turns the placement of the middle of the circle on or off.\n" +
                 "";
     }

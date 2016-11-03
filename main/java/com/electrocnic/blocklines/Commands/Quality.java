@@ -28,7 +28,10 @@ public class Quality implements Command {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         //arg[0] = "quality". arg[1] = "ellipse|circle". arg[2] = value.
         if(args.length==3) {
-            if(args[2].equalsIgnoreCase("auto")) qualifyableMap.get(args[1]).setQualityAuto(true);
+            if(args[2].equalsIgnoreCase("auto")) {
+                qualifyableMap.get(args[1]).setQualityAuto(true);
+                sender.addChatMessage(new TextComponentString("Quality set to auto."));
+            }
             else {
                 int quality = 0;
                 try {

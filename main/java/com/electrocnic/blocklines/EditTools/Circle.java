@@ -2,6 +2,7 @@ package com.electrocnic.blocklines.EditTools;
 
 import akka.japi.pf.FI;
 import com.electrocnic.blocklines.BlockLines;
+import com.electrocnic.blocklines.History.HWorld;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,7 +33,8 @@ public class Circle implements Drawable, Qualifyable{
     public static final int MODE_SEGMENT_IN = MODE_FULL_FILL+1;
     public static final int MODE_SEGMENT_OUT = MODE_SEGMENT_IN+1;
     public static final int MODE_ONE_SEGMENT = MODE_SEGMENT_OUT+1;
-    public static final int MODES = MODE_ONE_SEGMENT+1;
+    public static final int MODE_THICK = MODE_ONE_SEGMENT+1;
+    public static final int MODES = MODE_THICK+1;
 
     public Circle() {
         quality = Qualifyable.DEFAULT_QUALITY;
@@ -152,9 +154,9 @@ public class Circle implements Drawable, Qualifyable{
 
                 //w.getBlockAt((int) Math.round(M[0]), (int) Math.round(M[1]), (int) Math.round(M[2])).setType(Material.EMERALD_BLOCK);
                 if(ServerProxy.getWorld()!=null) {
-                    final World world = ServerProxy.getWorld();
+                    final HWorld world = ServerProxy.getWorld();
                     BlockPos midPos = new BlockPos(M[0], M[1], M[2]);
-                    if(setMid) world.setBlockState(midPos,  Blocks.EMERALD_BLOCK.getDefaultState(), 3);
+                    if(setMid) world.setBlockState(midPos,  Blocks.DIAMOND_BLOCK.getDefaultState(), 3);
 
                     double[] f = null;
                     double v1 = 0, v2 = 0, v3 = 0;
@@ -179,13 +181,11 @@ public class Circle implements Drawable, Qualifyable{
                     double umfang = 2 * Math.PI * radius;
                     player.addChatMessage(new TextComponentString("Umfang: " + umfang));
 
-                    if(autoQuality) quality = (int)(79*umfang+1);
+                    if(autoQuality) quality = (int)(Math.pow(umfang,2));
                     player.addChatMessage(new TextComponentString("Quality: " + quality));
 
                     double dphi = umfang/quality;
                     player.addChatMessage(new TextComponentString("dphi: " + dphi));
-
-
 
                     List<BlockPos> seg1 = new ArrayList<BlockPos>();
                     List<BlockPos> seg2 = new ArrayList<BlockPos>();
@@ -202,7 +202,8 @@ public class Circle implements Drawable, Qualifyable{
 
                     short segmentation=0;
                     double fillfactor = 1;
-                    double filldecrement = 0.01;
+                    double filldecrement = 1/(2.3*radius+1);
+                    if(mode==MODE_FULL_FILL)  player.addChatMessage(new TextComponentString("filldecrement: " + filldecrement));
                     boolean secondRound=false;
 
                     do {
@@ -210,15 +211,22 @@ public class Circle implements Drawable, Qualifyable{
                             K[0] = M[0] + (Math.cos(phi) * u1 + Math.sin(phi) * v1) * fillfactor;
                             K[2] = M[2] + (Math.cos(phi) * u2 + Math.sin(phi) * v2) * fillfactor;
                             K[1] = M[1] + (Math.cos(phi) * u3 + Math.sin(phi) * v3) * fillfactor;
-                            BlockPos blockPos = new BlockPos(Math.round(K[0]), Math.round(K[1]), Math.round(K[2]));
-
+                            BlockPos normalBlock = new BlockPos(Math.round(K[0]), Math.round(K[1]), Math.round(K[2]));
+                            BlockPos floorfloorfloor = new BlockPos((int)Math.floor(K[0]), (int)Math.floor(K[1]), (int)Math.floor(K[2]));
+                            BlockPos floorfloorceil = new BlockPos((int)Math.floor(K[0]), (int)Math.floor(K[1]), (int)Math.ceil(K[2]));
+                            BlockPos floorceilfloor = new BlockPos((int)Math.floor(K[0]), (int)Math.ceil(K[1]), (int)Math.floor(K[2]));
+                            BlockPos floorceilceil = new BlockPos((int)Math.floor(K[0]), (int)Math.ceil(K[1]), (int)Math.ceil(K[2]));
+                            BlockPos ceilfloorfloor = new BlockPos((int)Math.ceil(K[0]), (int)Math.floor(K[1]), (int)Math.floor(K[2]));
+                            BlockPos ceilfloorceil = new BlockPos((int)Math.ceil(K[0]), (int)Math.floor(K[1]), (int)Math.ceil(K[2]));
+                            BlockPos ceilceilfloor = new BlockPos((int)Math.ceil(K[0]), (int)Math.ceil(K[1]), (int)Math.floor(K[2]));
+                            BlockPos ceilceilceil = new BlockPos((int)Math.ceil(K[0]), (int)Math.ceil(K[1]), (int)Math.ceil(K[2]));
 
                             //adds the block, when it is a block from the selection, to the stack, to be able to figure out,
                             //to which segment the temp blocks belong.
                             if(!secondRound) {
                                 for (int z = 0; z < 3; z++) {
                                     //if(isAroundSelection(blockPos, selection.get(z))) {
-                                    if (blockPos.equals(selection.get(z))) {
+                                    if (normalBlock.equals(selection.get(z))) {
                                         if (stack.size() == 0 || (stack.size() == 1 && stack.get(0) != z)) { //just add first two blocks
                                             //remember which point is faced first
                                             stack.push(z);
@@ -255,8 +263,35 @@ public class Circle implements Drawable, Qualifyable{
                             if(segmentation>2) segmentation=0;
                         }else {*/
                         if(secondRound) {
-                            currentSegment.get(1).add(blockPos);
-                        }else currentSegment.get(segKey).add(blockPos);
+                            currentSegment.get(1).add(normalBlock);
+                            if(mode==MODE_THICK) {
+                                currentSegment.get(1).add(floorfloorfloor);
+                                if (!floorfloorceil.equals(floorfloorfloor)) currentSegment.get(1).add(floorfloorceil);
+                                if (!floorceilfloor.equals(floorfloorfloor)) currentSegment.get(1).add(floorceilfloor);
+                                if (!floorceilceil.equals(floorfloorfloor)) currentSegment.get(1).add(floorceilceil);
+                                if (!ceilfloorfloor.equals(floorfloorfloor)) currentSegment.get(1).add(ceilfloorfloor);
+                                if (!ceilfloorceil.equals(floorfloorfloor)) currentSegment.get(1).add(ceilfloorceil);
+                                if (!ceilceilfloor.equals(floorfloorfloor)) currentSegment.get(1).add(ceilceilfloor);
+                                if (!ceilceilceil.equals(floorfloorfloor)) currentSegment.get(1).add(ceilceilceil);
+                            }
+                        }else {
+                            currentSegment.get(segKey).add(normalBlock);
+                            if(mode==MODE_THICK) {
+                                currentSegment.get(segKey).add(floorfloorfloor);
+                                if (!floorfloorceil.equals(floorfloorfloor)) currentSegment.get(segKey).add(floorfloorceil);
+                                if (!floorceilfloor.equals(floorfloorfloor))
+                                    currentSegment.get(segKey).add(floorceilfloor);
+                                if (!floorceilceil.equals(floorfloorfloor))
+                                    currentSegment.get(segKey).add(floorceilceil);
+                                if (!ceilfloorfloor.equals(floorfloorfloor))
+                                    currentSegment.get(segKey).add(ceilfloorfloor);
+                                if (!ceilfloorceil.equals(floorfloorfloor))
+                                    currentSegment.get(segKey).add(ceilfloorceil);
+                                if (!ceilceilfloor.equals(floorfloorfloor))
+                                    currentSegment.get(segKey).add(ceilceilfloor);
+                                if (!ceilceilceil.equals(floorfloorfloor)) currentSegment.get(segKey).add(ceilceilceil);
+                            }
+                        }
                             //}
                         /*if(filter.get(mode).blockAllowed(blockPos, selection)){
                             world.setBlockState(blockPos,  Blocks.EMERALD_BLOCK.getDefaultState(), 3);
@@ -266,7 +301,7 @@ public class Circle implements Drawable, Qualifyable{
                         fillfactor -= filldecrement;
                         phi=0;
                         secondRound=true;
-                    }while (Circle.getMode()==1 && fillfactor>0.001);
+                    }while (Circle.getMode()==MODE_FULL_FILL && fillfactor>0.001);
 
                     int tempKey = ((stack.peek()+1)%3)+1; //maps values from 1,0,2 to 3,2,1
                     currentSegment.get(tempKey).addAll(temp);
@@ -483,7 +518,7 @@ public class Circle implements Drawable, Qualifyable{
 }
 
 interface Filter {
-    public void paintSegments(EntityPlayer player, World world, Map<Integer, List<BlockPos>> segments, IBlockState blockType);
+    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType);
 }
 
 /**
@@ -491,7 +526,7 @@ interface Filter {
  */
 class FilterMode0 implements Filter {
     @Override
-    public void paintSegments(EntityPlayer player, World world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
+    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
         /*Runnable placeBlock = () -> { for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
             for(BlockPos block : segment.getValue()) {
                 try {
@@ -517,7 +552,7 @@ class FilterMode0 implements Filter {
  */
 class FilterMode1 implements Filter {
     @Override
-    public void paintSegments(EntityPlayer player, World world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
+    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
         for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
             for(BlockPos block : segment.getValue()) {
                 world.setBlockState(block, /*Blocks.EMERALD_BLOCK.getDefaultState()*/ blockType, 3);
@@ -531,7 +566,7 @@ class FilterMode1 implements Filter {
  */
 class FilterMode2 implements Filter {
     @Override
-    public void paintSegments(EntityPlayer player, World world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
+    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
         for(int i=1; i<=2; i++) {
             for(BlockPos block : segments.get(i)) {
                 world.setBlockState(block, blockType, 3);
@@ -545,7 +580,7 @@ class FilterMode2 implements Filter {
  */
 class FilterMode3 implements Filter {
     @Override
-    public void paintSegments(EntityPlayer player, World world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
+    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
         for(BlockPos block : segments.get(3)) {
             world.setBlockState(block, blockType, 3);
         }
@@ -558,7 +593,7 @@ class FilterMode3 implements Filter {
  */
 class FilterMode4 implements Filter {
     @Override
-    public void paintSegments(EntityPlayer player, World world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
+    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
         for(BlockPos block : segments.get(1)) {
             world.setBlockState(block, blockType, 3);
         }

@@ -14,6 +14,20 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 /**
  * Created by Andreas on 29.10.2016.
+ *
+ * TODO:
+ * -Undo/Redo
+ * -Save history to file for persistence
+ * -Ellipse
+ * -Line
+ * -Command input allows drawings (input coordinates and mode)
+ * -Read script files for fast drawing big objects
+ * -Save Generated stuff as templates
+ * -Load Templates
+ * -Allow copy-pasta... (Or look if world edit can do stuff like that... and look if it can duplicate stuff in a direction)
+ *
+ *
+ *
  */
 @Mod(modid = BlockLines.MODID, name = BlockLines.MODNAME, version = BlockLines.VERSION)
 public class BlockLines {

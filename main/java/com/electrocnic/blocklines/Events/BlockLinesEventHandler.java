@@ -65,6 +65,8 @@ public class BlockLinesEventHandler {
                         //Circle circle = new Circle(selection, event.getEntityPlayer());
                         selection = new ArrayList<BlockPos>();
                         //circle.draw(event.getEntityPlayer());
+                    }else if(selection.size()>generator.get(currentMode).getSelectionCount()) {
+                        selection = new ArrayList<BlockPos>();
                     }
                 }
 
