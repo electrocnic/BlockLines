@@ -156,7 +156,7 @@ public class Circle implements Drawable, Qualifyable{
                 if(ServerProxy.getWorld()!=null) {
                     final HWorld world = ServerProxy.getWorld();
                     BlockPos midPos = new BlockPos(M[0], M[1], M[2]);
-                    if(setMid) world.setBlockState(midPos,  Blocks.DIAMOND_BLOCK.getDefaultState(), 3);
+
 
                     double[] f = null;
                     double v1 = 0, v2 = 0, v3 = 0;
@@ -191,11 +191,13 @@ public class Circle implements Drawable, Qualifyable{
                     List<BlockPos> seg2 = new ArrayList<BlockPos>();
                     List<BlockPos> seg3 = new ArrayList<BlockPos>();
                     List<BlockPos> temp = new ArrayList<BlockPos>();
+                    List<BlockPos> mid = new ArrayList<BlockPos>();
                     Map<Integer, List<BlockPos>> currentSegment = new HashMap<Integer, List<BlockPos>>();
                     currentSegment.put(0, temp);
                     currentSegment.put(1, seg1);
                     currentSegment.put(2, seg2);
                     currentSegment.put(3, seg3);
+                    currentSegment.put(4, mid);
                     int segKey = 0; //starting as temp.
 
                     Stack<Integer> stack = new Stack<Integer>();
@@ -306,8 +308,12 @@ public class Circle implements Drawable, Qualifyable{
                     int tempKey = ((stack.peek()+1)%3)+1; //maps values from 1,0,2 to 3,2,1
                     currentSegment.get(tempKey).addAll(temp);
 
+                    if(setMid) {
+                        //world.setBlockState(midPos,  Blocks.DIAMOND_BLOCK.getDefaultState(), 3);
+                        currentSegment.get(4).add(midPos);
+                    }
                     filter.get(mode).paintSegments(player, world, currentSegment, blockType);
-
+                    //TODO: test mode 5... add mode 5 to map.
                     //if(filter.get(mode).)
                 }
             }
@@ -539,11 +545,11 @@ class FilterMode0 implements Filter {
         } };
         Thread thread = new Thread(placeBlock);
         thread.start();*/
+        List<BlockPos> segmentsSum = new ArrayList<>();
         for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
-            for(BlockPos block : segment.getValue()) {
-                world.setBlockState(block, /*Blocks.EMERALD_BLOCK.getDefaultState()*/ blockType, 3);
-            }
+            segmentsSum.addAll(segment.getValue());
         }
+        world.setBlocks(segmentsSum, blockType, 3);
     }
 }
 
@@ -553,11 +559,11 @@ class FilterMode0 implements Filter {
 class FilterMode1 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
+        List<BlockPos> segmentsSum = new ArrayList<>();
         for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
-            for(BlockPos block : segment.getValue()) {
-                world.setBlockState(block, /*Blocks.EMERALD_BLOCK.getDefaultState()*/ blockType, 3);
-            }
+            segmentsSum.addAll(segment.getValue());
         }
+        world.setBlocks(segmentsSum, blockType, 3);
     }
 }
 
@@ -567,11 +573,18 @@ class FilterMode1 implements Filter {
 class FilterMode2 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
+        List<BlockPos> segmentsSum = new ArrayList<>();
         for(int i=1; i<=2; i++) {
-            for(BlockPos block : segments.get(i)) {
+            segmentsSum.addAll(segments.get(i));
+
+            /*for(BlockPos block : segments.get(i)) {
                 world.setBlockState(block, blockType, 3);
-            }
+            }*/
         }
+        if(!segments.get(4).isEmpty()) {
+            segmentsSum.add(segments.get(4).get(0));
+        }
+        world.setBlocks(segmentsSum, blockType, 3);
     }
 }
 
@@ -581,10 +594,15 @@ class FilterMode2 implements Filter {
 class FilterMode3 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
-        for(BlockPos block : segments.get(3)) {
+        /*for(BlockPos block : segments.get(3)) {
             world.setBlockState(block, blockType, 3);
+        }*/
+        List<BlockPos> segmentsSum = new ArrayList<>();
+        segmentsSum.addAll(segments.get(3));
+        if(!segments.get(4).isEmpty()) {
+            segmentsSum.add(segments.get(4).get(0));
         }
-
+        world.setBlocks(segmentsSum, blockType, 3);
     }
 }
 
@@ -594,9 +612,15 @@ class FilterMode3 implements Filter {
 class FilterMode4 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
-        for(BlockPos block : segments.get(1)) {
+        /*for(BlockPos block : segments.get(1)) {
             world.setBlockState(block, blockType, 3);
+        }*/
+        List<BlockPos> segmentsSum = new ArrayList<>();
+        segmentsSum.addAll(segments.get(1));
+        if(!segments.get(4).isEmpty()) {
+            segmentsSum.add(segments.get(4).get(0));
         }
+        world.setBlocks(segmentsSum, blockType, 3);
     }
 }
 
