@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Ellipse implements Drawable, Qualifyable {
+public class Ellipse extends Tool implements Drawable, Qualifyable {
 
     public static final String IDENTIFIER = "ellipse";
 

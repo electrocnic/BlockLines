@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Circle implements Drawable, Qualifyable{
+public class Circle extends Tool implements Drawable, Qualifyable{
 
     public static final String IDENTIFIER = "circle";
 
@@ -26,6 +26,7 @@ public class Circle implements Drawable, Qualifyable{
     private int quality = Qualifyable.DEFAULT_QUALITY;
     private Map<Integer, Filter> filter = null;
     private boolean autoQuality = true;
+    private static boolean thick = false;
     private static boolean setMid = false;
 
     public static final int MODE_FULL = 0;
@@ -33,8 +34,8 @@ public class Circle implements Drawable, Qualifyable{
     public static final int MODE_SEGMENT_IN = MODE_FULL_FILL+1;
     public static final int MODE_SEGMENT_OUT = MODE_SEGMENT_IN+1;
     public static final int MODE_ONE_SEGMENT = MODE_SEGMENT_OUT+1;
-    public static final int MODE_THICK = MODE_ONE_SEGMENT+1;
-    public static final int MODES = MODE_THICK+1;
+    //public static final int MODE_THICK = MODE_ONE_SEGMENT+1;
+    public static final int MODES = MODE_ONE_SEGMENT+1;
 
     public Circle() {
         quality = Qualifyable.DEFAULT_QUALITY;
@@ -44,6 +45,7 @@ public class Circle implements Drawable, Qualifyable{
         filter.put(MODE_SEGMENT_IN, new FilterMode2());
         filter.put(MODE_SEGMENT_OUT, new FilterMode3());
         filter.put(MODE_ONE_SEGMENT, new FilterMode4());
+       // filter.put(MODE_THICK, new FilterMode0());
         autoQuality = true;
     }
 
@@ -264,34 +266,47 @@ public class Circle implements Drawable, Qualifyable{
                             }
                             if(segmentation>2) segmentation=0;
                         }else {*/
+
                         if(secondRound) {
-                            currentSegment.get(1).add(normalBlock);
-                            if(mode==MODE_THICK) {
-                                currentSegment.get(1).add(floorfloorfloor);
-                                if (!floorfloorceil.equals(floorfloorfloor)) currentSegment.get(1).add(floorfloorceil);
-                                if (!floorceilfloor.equals(floorfloorfloor)) currentSegment.get(1).add(floorceilfloor);
-                                if (!floorceilceil.equals(floorfloorfloor)) currentSegment.get(1).add(floorceilceil);
-                                if (!ceilfloorfloor.equals(floorfloorfloor)) currentSegment.get(1).add(ceilfloorfloor);
-                                if (!ceilfloorceil.equals(floorfloorfloor)) currentSegment.get(1).add(ceilfloorceil);
-                                if (!ceilceilfloor.equals(floorfloorfloor)) currentSegment.get(1).add(ceilceilfloor);
-                                if (!ceilceilceil.equals(floorfloorfloor)) currentSegment.get(1).add(ceilceilceil);
+                            if(!currentSegment.get(1).contains(normalBlock) && overwrite(world, normalBlock)) currentSegment.get(1).add(normalBlock);
+                            if(/*mode==MODE_THICK*/thick) {
+                                if (!currentSegment.get(1).contains(floorfloorfloor)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(floorfloorfloor);
+                                if (!floorfloorceil.equals(floorfloorfloor) && !currentSegment.get(1).contains(floorfloorceil)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(floorfloorceil);
+                                if (!floorceilfloor.equals(floorfloorfloor) && !currentSegment.get(1).contains(floorceilfloor)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(floorceilfloor);
+                                if (!floorceilceil.equals(floorfloorfloor) && !currentSegment.get(1).contains(floorceilceil)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(floorceilceil);
+                                if (!ceilfloorfloor.equals(floorfloorfloor) && !currentSegment.get(1).contains(ceilfloorfloor)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(ceilfloorfloor);
+                                if (!ceilfloorceil.equals(floorfloorfloor) && !currentSegment.get(1).contains(ceilfloorceil)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(ceilfloorceil);
+                                if (!ceilceilfloor.equals(floorfloorfloor) && !currentSegment.get(1).contains(ceilceilfloor)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(ceilceilfloor);
+                                if (!ceilceilceil.equals(floorfloorfloor) && !currentSegment.get(1).contains(ceilceilceil)&& overwrite(world, normalBlock))
+                                    currentSegment.get(1).add(ceilceilceil);
                             }
                         }else {
-                            currentSegment.get(segKey).add(normalBlock);
-                            if(mode==MODE_THICK) {
-                                currentSegment.get(segKey).add(floorfloorfloor);
-                                if (!floorfloorceil.equals(floorfloorfloor)) currentSegment.get(segKey).add(floorfloorceil);
-                                if (!floorceilfloor.equals(floorfloorfloor))
+                            if (!currentSegment.get(segKey).contains(normalBlock)&& overwrite(world, normalBlock))
+                                currentSegment.get(segKey).add(normalBlock);
+                            if (/*mode==MODE_THICK*/thick) {
+                                if (!currentSegment.get(segKey).contains(floorfloorfloor)&& overwrite(world, normalBlock))
+                                    currentSegment.get(segKey).add(floorfloorfloor);
+                                if (!floorfloorceil.equals(floorfloorfloor) && !currentSegment.get(segKey).contains(floorfloorceil)&& overwrite(world, normalBlock))
+                                    currentSegment.get(segKey).add(floorfloorceil);
+                                if (!floorceilfloor.equals(floorfloorfloor) && !currentSegment.get(segKey).contains(floorceilfloor)&& overwrite(world, normalBlock))
                                     currentSegment.get(segKey).add(floorceilfloor);
-                                if (!floorceilceil.equals(floorfloorfloor))
+                                if (!floorceilceil.equals(floorfloorfloor) && !currentSegment.get(segKey).contains(floorceilceil)&& overwrite(world, normalBlock))
                                     currentSegment.get(segKey).add(floorceilceil);
-                                if (!ceilfloorfloor.equals(floorfloorfloor))
+                                if (!ceilfloorfloor.equals(floorfloorfloor) && !currentSegment.get(segKey).contains(ceilfloorfloor)&& overwrite(world, normalBlock))
                                     currentSegment.get(segKey).add(ceilfloorfloor);
-                                if (!ceilfloorceil.equals(floorfloorfloor))
+                                if (!ceilfloorceil.equals(floorfloorfloor) && !currentSegment.get(segKey).contains(ceilfloorceil)&& overwrite(world, normalBlock))
                                     currentSegment.get(segKey).add(ceilfloorceil);
-                                if (!ceilceilfloor.equals(floorfloorfloor))
+                                if (!ceilceilfloor.equals(floorfloorfloor) && !currentSegment.get(segKey).contains(ceilceilfloor)&& overwrite(world, normalBlock))
                                     currentSegment.get(segKey).add(ceilceilfloor);
-                                if (!ceilceilceil.equals(floorfloorfloor)) currentSegment.get(segKey).add(ceilceilceil);
+                                if (!ceilceilceil.equals(floorfloorfloor) && !currentSegment.get(segKey).contains(ceilceilceil)&& overwrite(world, normalBlock))
+                                    currentSegment.get(segKey).add(ceilceilceil);
                             }
                         }
                             //}
@@ -313,12 +328,12 @@ public class Circle implements Drawable, Qualifyable{
                         currentSegment.get(4).add(midPos);
                     }
                     filter.get(mode).paintSegments(player, world, currentSegment, blockType);
-                    //TODO: test mode 5... add mode 5 to map.
-                    //if(filter.get(mode).)
                 }
             }
         }
     }
+
+
 
     private boolean isAroundSelection(BlockPos block, BlockPos selection) {
         return (block.equals(selection) ||
@@ -500,10 +515,11 @@ public class Circle implements Drawable, Qualifyable{
         this.autoQuality = autoset;
     }
 
-    public static void setMode(int mode) {
+    public static int setMode(int mode) {
         if( mode>=MODE_FULL && mode<=MODES ) {
             Circle.mode = mode;
-        }
+            return mode;
+        }else return Circle.mode;
     }
 
     public static int getMode() {
@@ -520,6 +536,14 @@ public class Circle implements Drawable, Qualifyable{
 
     public static boolean getMid() {
         return setMid;
+    }
+
+    public static void setThick(boolean thick) {
+        Circle.thick = thick;
+    }
+
+    public static boolean getThick() {
+        return Circle.thick;
     }
 }
 
@@ -576,10 +600,6 @@ class FilterMode2 implements Filter {
         List<BlockPos> segmentsSum = new ArrayList<>();
         for(int i=1; i<=2; i++) {
             segmentsSum.addAll(segments.get(i));
-
-            /*for(BlockPos block : segments.get(i)) {
-                world.setBlockState(block, blockType, 3);
-            }*/
         }
         if(!segments.get(4).isEmpty()) {
             segmentsSum.add(segments.get(4).get(0));
@@ -594,9 +614,6 @@ class FilterMode2 implements Filter {
 class FilterMode3 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
-        /*for(BlockPos block : segments.get(3)) {
-            world.setBlockState(block, blockType, 3);
-        }*/
         List<BlockPos> segmentsSum = new ArrayList<>();
         segmentsSum.addAll(segments.get(3));
         if(!segments.get(4).isEmpty()) {
@@ -612,9 +629,6 @@ class FilterMode3 implements Filter {
 class FilterMode4 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
-        /*for(BlockPos block : segments.get(1)) {
-            world.setBlockState(block, blockType, 3);
-        }*/
         List<BlockPos> segmentsSum = new ArrayList<>();
         segmentsSum.addAll(segments.get(1));
         if(!segments.get(4).isEmpty()) {

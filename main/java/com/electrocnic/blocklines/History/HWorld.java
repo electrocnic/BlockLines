@@ -106,27 +106,22 @@ public class HWorld {
      * @param flags
      * @return
      */
-    public boolean setBlocks(@NotNull List<BlockPos> positions,
+    public void setBlocks(@NotNull List<BlockPos> positions,
                              IBlockState newState,
                              int flags) {
-        boolean b=false;
-
         if(world!=null) {
-            //TODO: remember block state of positions.
-            //...
-            //add new List with a hashmap with states or so...
-
             Blocks history = rememberStates(positions);
 
             undoHistory.push(history);
             redoHistory = new Stack<>();
 
             for(BlockPos pos : positions) {
-                world.setBlockState(pos, newState, flags);
+                try {
+                    world.setBlockState(pos, newState, flags);
+                }catch(Exception e) {
+                }
             }
         }
-
-        return b;
     }
 
     private void setBlocks(@NotNull Blocks blocks, int flags) {

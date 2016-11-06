@@ -16,10 +16,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * Created by Andreas on 29.10.2016.
  *
  * TODO:
- * -Undo/Redo
  * -Save history to file for persistence
  * -Ellipse
- * -Line
+ * -Wall
  * -Command input allows drawings (input coordinates and mode)
  * -Read script files for fast drawing big objects
  * -Save Generated stuff as templates

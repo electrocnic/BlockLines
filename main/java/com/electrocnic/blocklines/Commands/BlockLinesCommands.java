@@ -39,20 +39,24 @@ public class BlockLinesCommands extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "Commands for BlockLines:\n- /bl mode <ModeType> [0,1,2,3,4]- Available ModeTypes: circle, ellipse, line\n" +
+        return "Commands for BlockLines:\n- /bl mode <ModeType> [0|1|2|3|4|t|m|a]- Available ModeTypes: circle, ellipse, line\n" +
                 "- /bl abort - Will reset the current selection of blocks for the drawing.\n" +
                 "- /bl undo - Will undo the last drawing\n" +
                 "- /bl redo - Will redo the last drawing\n" +
                 "- /bl quality <circle|ellipse> <value|auto> - Will set the quality of the ellipse or circle.\n" +
                 this.addSpaces("") + "Low quality is fast, but can result in leaks. Auto will automatically set the quality.\n" +
-                "- /bl mode <circle|ellipse> [0|1|2|3|4|5|m] -\n" +
+                "- /bl mode <circle|ellipse> [0|1|2|3|4|t|m|a] -\n" +
                 this.addSpaces("") + "0: A circle/ellipse will be drawn.\n" +
                 this.addSpaces("") + "1: A filled circle/ellipse will be drawn.\n" +
                 this.addSpaces("") + "2: Only the part between the selected blocks will be drawn.\n" +
                 this.addSpaces("") + "3: Only the part outside the selected blocks will be drawn.\n" +
                 this.addSpaces("") + "4: Only the first segment between selection 1 and selection 2 will be drawn.\n" +
-                this.addSpaces("") + "5: The circle will be drawn with thick lines.\n" +
+                this.addSpaces("") + "t: The circle will be drawn with thick lines.\n" +
                 this.addSpaces("") + "m: Turns the placement of the middle of the circle on or off.\n" +
+                this.addSpaces("") + "a: Turns the placement of blocks to overwrite non-air blocks on or off.\n" +
+                "- /bl mode line [row|next] - For drawing more than one lines at the same time.\n" +
+                this.addSpaces("") + "row: starts the \"In a row\" Mode: Several lines can be drawn with low effort.\n" +
+                this.addSpaces("") + "next: starts the second selection sequence, if \"In a row\" is active.\n" +
                 "";
     }
 
