@@ -1,5 +1,7 @@
 package com.electrocnic.blocklines.Commands;
 
+import com.electrocnic.blocklines.Commands.Modes.ChangeMode;
+import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -8,13 +10,15 @@ import net.minecraft.util.text.TextComponentString;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Andreas on 31.10.2016.
  */
 public class BlockLinesCommands extends CommandBase {
 
-    Map<String, Command> commands = null;
+    Map<String, ICommand> commands = null;
 
     public static final String COMMAND_MODE = "mode";
     public static final String COMMAND_ABORT = "abort";
@@ -22,14 +26,21 @@ public class BlockLinesCommands extends CommandBase {
     public static final String COMMAND_REDO = "redo";
     public static final String COMMAND_QUALITY = "quality";
 
+    private BlockLinesEventHandler eventHandler = null;
+
     public BlockLinesCommands() {
         super();
-        commands = new HashMap<String, Command>();
-        commands.put(COMMAND_MODE, new ChangeMode());
-        commands.put(COMMAND_ABORT, new Abort());
-        commands.put(COMMAND_UNDO, new Undo());
-        commands.put(COMMAND_REDO, new Redo());
-        commands.put(COMMAND_QUALITY, new Quality());
+        commands = new HashMap<String, ICommand>();
+    }
+
+    public BlockLinesCommands(BlockLinesEventHandler eventHandler) {
+        this();
+        this.eventHandler = eventHandler;
+    }
+
+    public void addCommand(String name, ICommand command) {
+        if(commands==null) commands = new HashMap<String, ICommand>();
+        commands.put(name, command);
     }
 
     @Override
@@ -39,25 +50,8 @@ public class BlockLinesCommands extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "Commands for BlockLines:\n- /bl mode <ModeType> [0|1|2|3|4|t|m|a]- Available ModeTypes: circle, ellipse, line\n" +
-                "- /bl abort - Will reset the current selection of blocks for the drawing.\n" +
-                "- /bl undo - Will undo the last drawing\n" +
-                "- /bl redo - Will redo the last drawing\n" +
-                "- /bl quality <circle|ellipse> <value|auto> - Will set the quality of the ellipse or circle.\n" +
-                this.addSpaces("") + "Low quality is fast, but can result in leaks. Auto will automatically set the quality.\n" +
-                "- /bl mode <circle|ellipse> [0|1|2|3|4|t|m|a] -\n" +
-                this.addSpaces("") + "0: A circle/ellipse will be drawn.\n" +
-                this.addSpaces("") + "1: A filled circle/ellipse will be drawn.\n" +
-                this.addSpaces("") + "2: Only the part between the selected blocks will be drawn.\n" +
-                this.addSpaces("") + "3: Only the part outside the selected blocks will be drawn.\n" +
-                this.addSpaces("") + "4: Only the first segment between selection 1 and selection 2 will be drawn.\n" +
-                this.addSpaces("") + "t: The circle will be drawn with thick lines.\n" +
-                this.addSpaces("") + "m: Turns the placement of the middle of the circle on or off.\n" +
-                this.addSpaces("") + "a: Turns the placement of blocks to overwrite non-air blocks on or off.\n" +
-                "- /bl mode line [row|next] - For drawing more than one lines at the same time.\n" +
-                this.addSpaces("") + "row: starts the \"In a row\" Mode: Several lines can be drawn with low effort.\n" +
-                this.addSpaces("") + "next: starts the second selection sequence, if \"In a row\" is active.\n" +
-                "";
+        if(commands==null) commands = new HashMap<String, ICommand>();
+        return commands.entrySet().stream().map(Entry::toString).collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -74,15 +68,37 @@ public class BlockLinesCommands extends CommandBase {
         }
     }
 
-    private String addSpaces(String input) {
-        return this.addSpaces(input, 2);
+    public static BlockLinesCommands init(BlockLinesEventHandler eventHandler) {
+        BlockLinesCommands commandFactory = new BlockLinesCommands(eventHandler);
+
+        commandFactory.addCommand(COMMAND_MODE, new ChangeMode(eventHandler));
+        commandFactory.addCommand(COMMAND_ABORT, new Abort(eventHandler));
+        commandFactory.addCommand(COMMAND_UNDO, new Undo(eventHandler));
+        commandFactory.addCommand(COMMAND_REDO, new Redo(eventHandler));
+        commandFactory.addCommand(COMMAND_QUALITY, new Quality(eventHandler));
+
+        return commandFactory;
     }
 
-    private String addSpaces(String input, int totalLength) {
+
+
+    public static String addSpaces(String input) {
+        return addSpaces(input, 2);
+    }
+
+    public static String addSpaces(String input, int totalLength) {
         String spaces = "";
         for(int i=0; i<totalLength-input.length(); i++) {
             spaces += " ";
         }
         return input + spaces;
+    }
+
+    public void setEventHandler(BlockLinesEventHandler eventHandler) {
+        this.eventHandler = eventHandler;
+    }
+
+    public BlockLinesEventHandler getEventHandler() {
+        return this.eventHandler;
     }
 }

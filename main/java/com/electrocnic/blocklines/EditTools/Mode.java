@@ -6,5 +6,6 @@ package com.electrocnic.blocklines.EditTools;
 public enum Mode {
     Line,
     Ellipse,
-    Circle
+    Circle,
+    Cube
 }

@@ -25,8 +25,8 @@ public class CommonProxy {
 
     }
 
-    public void init(FMLInitializationEvent e) {
-        MinecraftForge.EVENT_BUS.register(new BlockLinesEventHandler());
+    public void init(FMLInitializationEvent e, BlockLinesEventHandler eventHandler) {
+        MinecraftForge.EVENT_BUS.register(eventHandler);
     }
 
     public void postInit(FMLPostInitializationEvent e) {

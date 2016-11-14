@@ -22,16 +22,14 @@ public class Circle extends Tool implements Drawable, Qualifyable{
 
     public static final String IDENTIFIER = "circle";
 
-    private static int mode = 0;
+    private int mode = 0;
     private int quality = Qualifyable.DEFAULT_QUALITY;
     private Map<Integer, Filter> filter = null;
     private boolean autoQuality = true;
-    private static boolean thick = false;
-    private static boolean setMid = false;
 
     public static final int MODE_FULL = 0;
-    public static final int MODE_FULL_FILL = MODE_FULL+1;
-    public static final int MODE_SEGMENT_IN = MODE_FULL_FILL+1;
+    //public static final int MODE_FULL_FILL = MODE_FULL+1;
+    public static final int MODE_SEGMENT_IN = MODE_FULL+1;
     public static final int MODE_SEGMENT_OUT = MODE_SEGMENT_IN+1;
     public static final int MODE_ONE_SEGMENT = MODE_SEGMENT_OUT+1;
     //public static final int MODE_THICK = MODE_ONE_SEGMENT+1;
@@ -41,7 +39,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
         quality = Qualifyable.DEFAULT_QUALITY;
         filter = new HashMap<Integer, Filter>();
         filter.put(MODE_FULL, new FilterMode0());
-        filter.put(MODE_FULL_FILL, new FilterMode1());
+        //filter.put(MODE_FULL_FILL, new FilterMode1());
         filter.put(MODE_SEGMENT_IN, new FilterMode2());
         filter.put(MODE_SEGMENT_OUT, new FilterMode3());
         filter.put(MODE_ONE_SEGMENT, new FilterMode4());
@@ -207,7 +205,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
                     short segmentation=0;
                     double fillfactor = 1;
                     double filldecrement = 1/(2.3*radius+1);
-                    if(mode==MODE_FULL_FILL)  player.addChatMessage(new TextComponentString("filldecrement: " + filldecrement));
+                    if(fill)  player.addChatMessage(new TextComponentString("filldecrement: " + filldecrement));
                     boolean secondRound=false;
 
                     do {
@@ -318,12 +316,12 @@ public class Circle extends Tool implements Drawable, Qualifyable{
                         fillfactor -= filldecrement;
                         phi=0;
                         secondRound=true;
-                    }while (Circle.getMode()==MODE_FULL_FILL && fillfactor>0.001);
+                    }while (fill && fillfactor>0.001);
 
                     int tempKey = ((stack.peek()+1)%3)+1; //maps values from 1,0,2 to 3,2,1
                     currentSegment.get(tempKey).addAll(temp);
 
-                    if(setMid) {
+                    if(super.mid) {
                         //world.setBlockState(midPos,  Blocks.DIAMOND_BLOCK.getDefaultState(), 3);
                         currentSegment.get(4).add(midPos);
                     }
@@ -515,35 +513,17 @@ public class Circle extends Tool implements Drawable, Qualifyable{
         this.autoQuality = autoset;
     }
 
-    public static int setMode(int mode) {
+    @Override
+    public int setMode(int mode) {
         if( mode>=MODE_FULL && mode<=MODES ) {
-            Circle.mode = mode;
+            this.mode = mode;
             return mode;
-        }else return Circle.mode;
+        }else return this.mode;
     }
 
-    public static int getMode() {
+    @Override
+    public int getMode() {
         return mode;
-    }
-
-    public static void setMid(boolean mid) {
-        setMid = mid;
-    }
-
-    public static void toggleMid() {
-        setMid = !setMid;
-    }
-
-    public static boolean getMid() {
-        return setMid;
-    }
-
-    public static void setThick(boolean thick) {
-        Circle.thick = thick;
-    }
-
-    public static boolean getThick() {
-        return Circle.thick;
     }
 }
 
@@ -555,32 +535,6 @@ interface Filter {
  * Full circle (not filled)
  */
 class FilterMode0 implements Filter {
-    @Override
-    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
-        /*Runnable placeBlock = () -> { for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
-            for(BlockPos block : segment.getValue()) {
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                world.setBlockState(block, /*Blocks.EMERALD_BLOCK.getDefaultState()*blockType, 3);
-            }
-        } };
-        Thread thread = new Thread(placeBlock);
-        thread.start();*/
-        List<BlockPos> segmentsSum = new ArrayList<>();
-        for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
-            segmentsSum.addAll(segment.getValue());
-        }
-        world.setBlocks(segmentsSum, blockType, 3);
-    }
-}
-
-/**
- * Full circle, filled
- */
-class FilterMode1 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
         List<BlockPos> segmentsSum = new ArrayList<>();

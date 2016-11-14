@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 /**
  * Created by Andreas on 31.10.2016.
  */
-public interface Command {
+@FunctionalInterface
+public interface ICommand {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args);
 }

@@ -2,14 +2,11 @@ package com.electrocnic.blocklines.Events;
 
 import com.electrocnic.blocklines.EditTools.*;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.GameType;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -23,19 +20,20 @@ import java.util.Map;
  */
 public class BlockLinesEventHandler {
     private short deStutter = 0;
-    private static List<BlockPos> selection = null;
-    private static List<BlockPos> selection2 = null;
+    private List<BlockPos> selection = null; //was static
+    private List<BlockPos> selection2 = null; //
 
     private Map<Mode, Drawable> generator = null;
 
-    private static Mode currentMode = Mode.Line;
-    private static boolean inARaw = false;
-    private static int inARawCount = 0;
-    private static boolean secondRaw = false;
+    private Mode currentMode = Mode.Line; //
+    private boolean inARow = false; //
+    private int inARowCount = 0; //
+    private boolean secondRow = false; //
 
-    private static final Line line = new Line();
-    private static final Ellipse ellipse = new Ellipse();
-    private static final Circle circle = new Circle();
+    private final Line line = new Line(); //
+    private final Ellipse ellipse = new Ellipse(); //
+    private final Circle circle = new Circle(); //
+    private final Cube cube = new Cube(); //
 
     public BlockLinesEventHandler() {
         deStutter = 0;
@@ -45,8 +43,9 @@ public class BlockLinesEventHandler {
         generator.put(Mode.Line, line);
         generator.put(Mode.Ellipse, ellipse);
         generator.put(Mode.Circle, circle);
-        inARawCount=0;
-        secondRaw = false;
+        generator.put(Mode.Cube, cube);
+        inARowCount =0;
+        secondRow = false;
     }
 
     @SubscribeEvent
@@ -65,16 +64,16 @@ public class BlockLinesEventHandler {
                 }
                 if(ServerProxy.getWorld()!=null) {
                     //ServerProxy.getWorld().setBlockToAir(pos);
-                    if(!secondRaw) {
+                    if(!secondRow) {
                         selection.add(pos);
-                    }else if(secondRaw) {
+                    }else if(secondRow) {
                         selection2.add(pos);
                     }
-                    message = new TextComponentString("Block has been added to your " + (inARaw?(secondRaw?"second ":"first "):"") + "selection. Selected: " + (secondRaw?selection2:selection).size());
+                    message = new TextComponentString("Block has been added to your " + (inARow ?(secondRow ?"second ":"first "):"") + "selection. Selected: " + (secondRow ?selection2:selection).size());
                     event.getEntityPlayer().addChatMessage(message);
-                    if((!(inARaw&&currentMode==Mode.Line) && selection.size() == generator.get(currentMode).getSelectionCount())
-                            || ((inARaw&&currentMode==Mode.Line) && secondRaw && selection2.size() >= selection.size())) {
-                        if(!(inARaw&&currentMode==Mode.Line)) generator.get(currentMode).draw(event.getEntityPlayer(), selection, ServerProxy.getWorld().getBlockState(selection.get(0)));
+                    if((!(inARow &&currentMode==Mode.Line) && selection.size() == generator.get(currentMode).getSelectionCount())
+                            || ((inARow &&currentMode==Mode.Line) && secondRow && selection2.size() >= selection.size())) {
+                        if(!(inARow &&currentMode==Mode.Line)) generator.get(currentMode).draw(event.getEntityPlayer(), selection, ServerProxy.getWorld().getBlockState(selection.get(0)));
                         else {
                             for(int i=0; i<selection.size(); i++) {
                                 List<BlockPos> temp = new ArrayList<>();
@@ -86,10 +85,10 @@ public class BlockLinesEventHandler {
                         //Circle circle = new Circle(selection, event.getEntityPlayer());
                         selection = new ArrayList<BlockPos>();
                         selection2 = new ArrayList<BlockPos>();
-                        secondRaw = false;
-                        inARawCount = 0;
+                        secondRow = false;
+                        inARowCount = 0;
                         //circle.draw(event.getEntityPlayer());
-                    }else if(!inARaw&&selection.size()>generator.get(currentMode).getSelectionCount()) {
+                    }else if(!inARow &&selection.size()>generator.get(currentMode).getSelectionCount()) {
                         selection = new ArrayList<BlockPos>();
                     }
                 }
@@ -99,46 +98,51 @@ public class BlockLinesEventHandler {
         }
     }
 
-    public static Line getLine() {
+
+    public Line getLine() {
         return line;
     }
 
-    public static Ellipse getEllipse() {
+    public Ellipse getEllipse() {
         return ellipse;
     }
 
-    public static Circle getCircle() {
+    public Circle getCircle() {
         return circle;
     }
 
-    public static void setInARaw(boolean inARaw) {
-        BlockLinesEventHandler.inARaw = inARaw;
+    public Cube getCube() {
+        return cube;
     }
 
-    public static boolean getInARaw() {
-        return inARaw;
+    public void setInARow(boolean inARow) {
+        this.inARow = inARow;
     }
 
-    public static void setSecondRaw(boolean secondRaw) {
-        BlockLinesEventHandler.secondRaw = secondRaw;
+    public boolean isInARow() {
+        return inARow;
     }
 
-    public static boolean getSecondRaw() {
-        return secondRaw;
+    public void setSecondRow(boolean secondRaw) {
+        this.secondRow = secondRaw;
     }
 
-    public static void setMode(Mode mode) {
-        BlockLinesEventHandler.currentMode = mode;
+    public boolean getSecondRow() {
+        return secondRow;
     }
 
-    public static Mode getCurrentMode() {
+    public void setMode(Mode mode) {
+        this.currentMode = mode;
+    }
+
+    public Mode getCurrentMode() {
         return currentMode;
     }
 
-    public static void resetSelection() {
+    public void resetSelection() {
         selection = new ArrayList<BlockPos>();
         selection2 = new ArrayList<BlockPos>();
-        inARawCount = 0;
-        secondRaw = false;
+        inARowCount = 0;
+        secondRow = false;
     }
 }

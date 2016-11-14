@@ -30,8 +30,8 @@ public class ServerProxy extends CommonProxy   {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent e) {
-        super.init(e);
+    public void init(FMLInitializationEvent e, BlockLinesEventHandler eventHandler) {
+        super.init(e, eventHandler);
         WorldServer worldServer = DimensionManager.getWorld(0);
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "FakePlayer");
         FakePlayer fakePlayer = new FakePlayer(worldServer, gameProfile);

@@ -14,14 +14,16 @@ import java.util.Map;
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Quality implements Command {
+public class Quality implements ICommand {
 
     private Map<String, Qualifyable> qualifyableMap = null;
+    private BlockLinesEventHandler eventHandler = null;
 
-    public Quality() {
+    public Quality(BlockLinesEventHandler eventHandler) {
+        this.eventHandler = eventHandler;
         qualifyableMap = new HashMap<String, Qualifyable>();
-        qualifyableMap.put(Ellipse.IDENTIFIER, BlockLinesEventHandler.getEllipse());
-        qualifyableMap.put(Circle.IDENTIFIER, BlockLinesEventHandler.getCircle());
+        qualifyableMap.put(Ellipse.IDENTIFIER, eventHandler.getEllipse());
+        qualifyableMap.put(Circle.IDENTIFIER, eventHandler.getCircle());
     }
 
     @Override
@@ -50,5 +52,11 @@ public class Quality implements Command {
         }else {
             sender.addChatMessage(new TextComponentString("Quality needs a value and the target (ellipse or circle)."));
         }
+    }
+
+    @Override
+    public String toString() {
+        return "- /bl quality <circle|ellipse> <value|auto> - Will set the quality of the ellipse or circle." +
+                BlockLinesCommands.addSpaces("") + "Low quality is fast, but can result in leaks. Auto will automatically set the quality.";
     }
 }

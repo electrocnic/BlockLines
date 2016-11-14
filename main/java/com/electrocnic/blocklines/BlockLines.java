@@ -1,6 +1,7 @@
 package com.electrocnic.blocklines;
 
 import com.electrocnic.blocklines.Commands.BlockLinesCommands;
+import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 import com.electrocnic.blocklines.Proxy.CommonProxy;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.init.Blocks;
@@ -18,8 +19,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * TODO:
  * -Save history to file for persistence
  * -Ellipse
- * -Wall
- * -Command input allows drawings (input coordinates and mode)
+ * -Copy-Paste functions...
+ * -ICommand input allows drawings (input coordinates and mode)
  * -Read script files for fast drawing big objects
  * -Save Generated stuff as templates
  * -Load Templates
@@ -37,6 +38,8 @@ public class BlockLines {
     @SidedProxy(clientSide="com.electrocnic.blocklines.Proxy.ClientProxy", serverSide="com.electrocnic.blocklines.Proxy.ServerProxy")
     public static CommonProxy proxy;
 
+    private BlockLinesEventHandler eventHandler = null;
+
     @Mod.Instance
     public static BlockLines instance = new BlockLines();
 
@@ -44,12 +47,13 @@ public class BlockLines {
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         proxy.preInit(e);
+        eventHandler = new BlockLinesEventHandler();
         System.out.println("Called method: [preInit]");
     }
 
     @EventHandler
     public void init(FMLInitializationEvent e) {
-        proxy.init(e);
+        proxy.init(e, eventHandler);
         System.out.println("Called method: [init]");
     }
 
@@ -64,6 +68,6 @@ public class BlockLines {
     {
         // register server commands
         ServerProxy.setWorld(event.getServer().getEntityWorld());
-        event.registerServerCommand(new BlockLinesCommands());
+        event.registerServerCommand(BlockLinesCommands.init(eventHandler));
     }
 }

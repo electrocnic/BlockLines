@@ -13,7 +13,7 @@ public class Ellipse extends Tool implements Drawable, Qualifyable {
 
     public static final String IDENTIFIER = "ellipse";
 
-    private static int mode = 0;
+    private int mode = 0;
     private int quality = Qualifyable.DEFAULT_QUALITY;
     private boolean autoQuality = true;
 
@@ -42,13 +42,16 @@ public class Ellipse extends Tool implements Drawable, Qualifyable {
         this.autoQuality = autoset;
     }
 
-    public static void setMode(int mode) {
+    @Override
+    public int setMode(int mode) {
         if( mode>=0 && mode<=3 ) {
-            Ellipse.mode = mode;
+            this.mode = mode;
         }
+        return this.mode;
     }
 
-    public static int getMode() {
+    @Override
+    public int getMode() {
         return mode;
     }
 }

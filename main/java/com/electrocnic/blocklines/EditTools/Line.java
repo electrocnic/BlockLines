@@ -1,5 +1,6 @@
 package com.electrocnic.blocklines.EditTools;
 
+import com.electrocnic.blocklines.Commands.IFlag;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,7 +48,25 @@ public class Line extends Tool implements Drawable {
     }
 
     @Override
+    public String toString() {
+        return "/bl mode line [row|next] - For drawing more than one lines at the same time.\n" +
+                "  row: starts the \"In a row\" Mode: Several lines can be drawn with low effort.\n" +
+                "  next: starts the second selection sequence, if \"In a row\" is active.";
+    }
+
+    @Override
     public int getSelectionCount() {
         return 2;
+    }
+
+
+    @Override
+    public int setMode(int mode) {
+        return 0;
+    }
+
+    @Override
+    public int getMode() {
+        return 0;
     }
 }

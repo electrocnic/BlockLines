@@ -1,5 +1,6 @@
 package com.electrocnic.blocklines.Proxy;
 
+import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -15,8 +16,8 @@ public class ClientProxy extends CommonProxy{
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent e) {
-        super.init(e);
+    public void init(FMLInitializationEvent e, BlockLinesEventHandler eventHandler) {
+        super.init(e, eventHandler);
     }
 
     @Mod.EventHandler
