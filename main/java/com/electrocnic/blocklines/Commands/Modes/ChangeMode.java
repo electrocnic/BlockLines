@@ -18,14 +18,10 @@ import java.util.stream.Collectors;
  */
 public class ChangeMode implements ICommand {
 
-    private Map<String, ICommand> subcommands = null;
+    private ISubCommands subcommands = null;
 
-    public ChangeMode(BlockLinesEventHandler eventHandler) {
-        subcommands = new HashMap<String, ICommand>();
-        subcommands.put(Line.IDENTIFIER, new SubCommandLine(eventHandler));
-        subcommands.put(Ellipse.IDENTIFIER, new SubCommandEllipse(eventHandler));
-        subcommands.put(Circle.IDENTIFIER, new SubCommandCircle(eventHandler));
-        subcommands.put(Cube.IDENTIFIER, new SubCommandCube(eventHandler));
+    public ChangeMode(ISubCommands subcommands) {
+        this.subcommands = subcommands;
     }
 
     @Override

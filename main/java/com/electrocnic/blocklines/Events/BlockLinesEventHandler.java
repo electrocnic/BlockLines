@@ -50,7 +50,12 @@ public class BlockLinesEventHandler {
 
     @SubscribeEvent
     public void onClick(PlayerInteractEvent event) {
+        //TODO: use "command-pattern" here too...  make methods for each command-setting, for example, the multiple-line selection does a different thing than the others... also the selection of a mirror plane...
+        //TODO: use same patter as in commands: template and subclass sandbox: some methods will do the pretty much same thing. the methods will return the final selection (or nothing in case of mirror-plane)
+        //TODO: the final selection will be put into the draw method...
 
+        //TODO: try to couple selection mode with draw-class... thus, not in seperated methods, but in the same method... re-arrange the generator-hashmap.
+        //TODO: BAD: as the selection can have different forms, it is now mandatory to be careful of how to call the draw method. this should not be as dangerous. make a beautiful pattern.
         if(event.getHand() == EnumHand.OFF_HAND) {
             if (deStutter >= 1) deStutter = 0;
             else {

@@ -8,7 +8,7 @@ import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 /**
  * Created by Andreas on 14.11.2016.
  */
-public class SubCommandCube extends TemplateExecutive<Cube> {
+public class SubCommandCube extends TemplateExecutive {
 
     private static final String NOT_SUPPORTED = "This mode is not supported for Cubes.";
 

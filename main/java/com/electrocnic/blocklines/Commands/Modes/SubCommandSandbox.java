@@ -8,19 +8,18 @@ import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 /**
  * This class is the base class for Sub-Commands. This is probably the subclass-sandbox pattern.
  * Here are the methods implemented, which are used by subclasses.
- * @param <T> The type of the mode-object (on 14.11.2016 this would be for example: Circle, Line, Ellipse, Cube)
  */
-public abstract class SubCommandSandbox<T extends IFlag> implements ICommand {
+public abstract class SubCommandSandbox implements ICommand {
 
     protected BlockLinesEventHandler eventHandler = null;
-    protected T modeObject = null;
+    protected IFlag modeObject = null;
 
     /**
      * The constructor for the SubCommandSandbox:
      * @param eventHandler The event-handler, needed to set the Mode.
      * @param modeObject The "mode-object" (for example: Circle, Ellipse, Line, Cube, ...)
      */
-    public SubCommandSandbox(BlockLinesEventHandler eventHandler, T modeObject) {
+    public SubCommandSandbox(BlockLinesEventHandler eventHandler, IFlag modeObject) {
         this.eventHandler = eventHandler;
         this.modeObject = modeObject;
     }

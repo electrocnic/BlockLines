@@ -1,6 +1,7 @@
 package com.electrocnic.blocklines.Commands;
 
 import com.electrocnic.blocklines.Commands.Modes.ChangeMode;
+import com.electrocnic.blocklines.Commands.Modes.SubcommandWrapper;
 import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -71,7 +72,7 @@ public class BlockLinesCommands extends CommandBase {
     public static BlockLinesCommands init(BlockLinesEventHandler eventHandler) {
         BlockLinesCommands commandFactory = new BlockLinesCommands(eventHandler);
 
-        commandFactory.addCommand(COMMAND_MODE, new ChangeMode(eventHandler));
+        commandFactory.addCommand(COMMAND_MODE, new ChangeMode(SubcommandWrapper.create(eventHandler)));
         commandFactory.addCommand(COMMAND_ABORT, new Abort(eventHandler));
         commandFactory.addCommand(COMMAND_UNDO, new Undo(eventHandler));
         commandFactory.addCommand(COMMAND_REDO, new Redo(eventHandler));

@@ -8,7 +8,7 @@ import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 /**
  * Created by Andreas on 14.11.2016.
  */
-public class SubCommandLine extends TemplateExecutive<Line> {
+public class SubCommandLine extends TemplateExecutive {
 
     private static final String NOT_SUPPORTED = "This mode is not supported for Lines.";
 

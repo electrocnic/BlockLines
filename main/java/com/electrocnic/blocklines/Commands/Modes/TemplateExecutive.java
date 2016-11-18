@@ -16,13 +16,12 @@ import java.util.Map;
  * be implemented in each Subclass individually. Non-Implemented Subclass methods will be empty and
  * thus do nothing. There is an additional method, called "useOther" which can do anything, not yet considered
  * in the execute method, if needed.
- * @param <T> The "mode-Object"-type (For example: Circle, Ellipse, Line, Cube, ...)
  */
-public abstract class TemplateExecutive<T extends IFlag> extends SubCommandSandbox<T> {
+public abstract class TemplateExecutive extends SubCommandSandbox {
 
     private Map<String, IFeedbackMethod> subcommands = null;
 
-    public TemplateExecutive(BlockLinesEventHandler eventHandler, T modeObject) {
+    public TemplateExecutive(BlockLinesEventHandler eventHandler, IFlag modeObject) {
         super(eventHandler, modeObject);
         subcommands = new HashMap<String, IFeedbackMethod>();
         subcommands.put("a", this::useAirOnlyImpl);

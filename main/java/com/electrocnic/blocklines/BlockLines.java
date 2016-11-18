@@ -17,6 +17,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * Created by Andreas on 29.10.2016.
  *
  * TODO:
+ * -Mirror mode: set a mirror plane, using the mid-block and axis. Choose how many axis are active (via commands). Everything placed by BlockLines will be live-mirrored at those axises.
+ *    (If possible: everything placed by hand would also be mirrored, and also be added to undo/redo history)
+ *    Combined with copy-paste: copy paste would also be mirrored.
  * -Save history to file for persistence
  * -Ellipse
  * -Copy-Paste functions...

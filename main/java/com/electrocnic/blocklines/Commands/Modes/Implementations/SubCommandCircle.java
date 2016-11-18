@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Andreas on 14.11.2016.
  */
-public class SubCommandCircle extends TemplateExecutive<Circle> {
+public class SubCommandCircle extends TemplateExecutive {
 
     private static final String NOT_SUPPORTED = "This mode is not supported for Circles.";
 
