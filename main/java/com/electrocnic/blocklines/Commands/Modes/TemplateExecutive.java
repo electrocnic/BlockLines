@@ -2,7 +2,7 @@ package com.electrocnic.blocklines.Commands.Modes;
 
 import com.electrocnic.blocklines.Commands.IFlag;
 import com.electrocnic.blocklines.Commands.OptOut;
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -21,7 +21,7 @@ public abstract class TemplateExecutive extends SubCommandSandbox {
 
     private Map<String, IFeedbackMethod> subcommands = null;
 
-    public TemplateExecutive(BlockLinesEventHandler eventHandler, IFlag modeObject) {
+    public TemplateExecutive(ICommandEventListener eventHandler, IFlag modeObject) {
         super(eventHandler, modeObject);
         subcommands = new HashMap<String, IFeedbackMethod>();
         subcommands.put("a", this::useAirOnlyImpl);

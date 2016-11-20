@@ -1,7 +1,6 @@
 package com.electrocnic.blocklines.Commands;
 
 
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -11,10 +10,8 @@ import net.minecraft.server.MinecraftServer;
  */
 public class Undo implements ICommand {
 
-    private BlockLinesEventHandler eventHandler = null;
+    public Undo() {
 
-    public Undo(BlockLinesEventHandler eventHandler) {
-        this.eventHandler = eventHandler;
     }
 
     @Override

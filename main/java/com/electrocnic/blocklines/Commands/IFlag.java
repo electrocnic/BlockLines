@@ -1,7 +1,5 @@
 package com.electrocnic.blocklines.Commands;
 
-import com.electrocnic.blocklines.EditTools.Mode;
-
 /**
  * Created by Andreas on 14.11.2016.
  */
@@ -20,5 +18,11 @@ public interface IFlag {
 
     int setMode(int mode);
     int getMode();
+
+    void setInARow(boolean inARow);
+    boolean isInARow();
+
+    void setSecondRow(boolean secondRow);
+    boolean isSecondRow();
     //TODO: add more
 }

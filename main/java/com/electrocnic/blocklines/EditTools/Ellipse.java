@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Ellipse extends Tool implements Drawable, Qualifyable {
+public class Ellipse extends Tool implements Qualifyable {
 
     public static final String IDENTIFIER = "ellipse";
 
@@ -18,19 +18,25 @@ public class Ellipse extends Tool implements Drawable, Qualifyable {
     private boolean autoQuality = true;
 
     public Ellipse() {
+        super(3); //TODO change selectionCount if more or less.
         quality = Qualifyable.DEFAULT_QUALITY;
         autoQuality = true;
     }
 
-    @Override
     public void draw(EntityPlayer player, List<BlockPos> selection, IBlockState blockType) {
 
     }
 
     @Override
-    public int getSelectionCount() {
-        return 3; //TODO: change if only 2 are needed.
+    public void performSelection(BlockPos pos, EntityPlayer player) {
+
     }
+
+    @Override
+    public void resetSelection() {
+        //TODO
+    }
+
 
     @Override
     public void setQuality(int quality) {
@@ -54,4 +60,5 @@ public class Ellipse extends Tool implements Drawable, Qualifyable {
     public int getMode() {
         return mode;
     }
+
 }

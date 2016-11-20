@@ -8,11 +8,19 @@ import net.minecraft.util.math.BlockPos;
 /**
  * Created by Andreas on 05.11.2016.
  */
-public abstract class Tool implements IFlag {
+public abstract class Tool implements IFlag, ISelectable {
     protected boolean airOnly = false;
     protected boolean thick = false;
     protected boolean mid = false;
     protected boolean fill = false;
+    protected boolean inARow = false;
+    protected boolean secondRow = false;
+
+    private int selectionCount = 0;
+
+    public Tool(int selectionCount) {
+        this.selectionCount = selectionCount;
+    }
 
     @Override
     public void setAirOnly(boolean airOnly) {
@@ -52,6 +60,30 @@ public abstract class Tool implements IFlag {
     @Override
     public void setFill(boolean fill) {
         this.fill = fill;
+    }
+
+    @Override
+    public void setInARow(boolean inARow) {
+        this.inARow = inARow;
+    }
+
+    @Override
+    public boolean isInARow() {
+        return this.inARow;
+    }
+
+    @Override
+    public void setSecondRow(boolean secondRow) {
+        this.secondRow = secondRow;
+    }
+
+    @Override
+    public boolean isSecondRow() {
+        return this.secondRow;
+    }
+
+    protected int getSelectionCount() {
+        return selectionCount;
     }
 
     protected boolean overwrite(HWorld world, BlockPos pos) {

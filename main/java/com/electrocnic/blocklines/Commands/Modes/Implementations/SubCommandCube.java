@@ -2,8 +2,7 @@ package com.electrocnic.blocklines.Commands.Modes.Implementations;
 
 import com.electrocnic.blocklines.Commands.Modes.TemplateExecutive;
 import com.electrocnic.blocklines.EditTools.Cube;
-import com.electrocnic.blocklines.EditTools.Mode;
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 
 /**
  * Created by Andreas on 14.11.2016.
@@ -12,13 +11,13 @@ public class SubCommandCube extends TemplateExecutive {
 
     private static final String NOT_SUPPORTED = "This mode is not supported for Cubes.";
 
-    public SubCommandCube(BlockLinesEventHandler eventHandler) {
-        super(eventHandler, eventHandler.getCube());
+    public SubCommandCube(ICommandEventListener eventHandler) {
+        super(eventHandler, eventHandler.getTool(Cube.IDENTIFIER));
     }
 
     @Override
     protected String useModeImpl() {
-        super.setMode(Mode.Cube);
+        super.setMode(Cube.IDENTIFIER);
         return "Mode set to Cube.";
     }
 

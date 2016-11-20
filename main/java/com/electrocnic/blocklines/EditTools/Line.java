@@ -1,6 +1,5 @@
 package com.electrocnic.blocklines.EditTools;
 
-import com.electrocnic.blocklines.Commands.IFlag;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,11 +11,14 @@ import java.util.List;
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Line extends Tool implements Drawable {
+public class Line extends Tool {
 
     public static final String IDENTIFIER = "line";
 
-    @Override
+    public Line() {
+        super(2);
+    }
+
     public void draw(EntityPlayer player, List<BlockPos> selection, IBlockState blockType) {
         if(selection!=null && selection.size()>=2) {
             double x = selection.get(0).getX();
@@ -48,15 +50,20 @@ public class Line extends Tool implements Drawable {
     }
 
     @Override
+    public void performSelection(BlockPos pos, EntityPlayer player) {
+        //TODO: implement. (use Tool superclass and subclass sandbox pattern
+    }
+
+    @Override
+    public void resetSelection() {
+        //TODO
+    }
+
+    @Override
     public String toString() {
         return "/bl mode line [row|next] - For drawing more than one lines at the same time.\n" +
                 "  row: starts the \"In a row\" Mode: Several lines can be drawn with low effort.\n" +
                 "  next: starts the second selection sequence, if \"In a row\" is active.";
-    }
-
-    @Override
-    public int getSelectionCount() {
-        return 2;
     }
 
 
@@ -69,4 +76,5 @@ public class Line extends Tool implements Drawable {
     public int getMode() {
         return 0;
     }
+
 }

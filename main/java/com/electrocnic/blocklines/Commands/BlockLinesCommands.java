@@ -3,6 +3,7 @@ package com.electrocnic.blocklines.Commands;
 import com.electrocnic.blocklines.Commands.Modes.ChangeMode;
 import com.electrocnic.blocklines.Commands.Modes.SubcommandWrapper;
 import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -27,14 +28,14 @@ public class BlockLinesCommands extends CommandBase {
     public static final String COMMAND_REDO = "redo";
     public static final String COMMAND_QUALITY = "quality";
 
-    private BlockLinesEventHandler eventHandler = null;
+    private ICommandEventListener eventHandler = null;
 
     public BlockLinesCommands() {
         super();
         commands = new HashMap<String, ICommand>();
     }
 
-    public BlockLinesCommands(BlockLinesEventHandler eventHandler) {
+    public BlockLinesCommands(ICommandEventListener eventHandler) {
         this();
         this.eventHandler = eventHandler;
     }
@@ -74,8 +75,8 @@ public class BlockLinesCommands extends CommandBase {
 
         commandFactory.addCommand(COMMAND_MODE, new ChangeMode(SubcommandWrapper.create(eventHandler)));
         commandFactory.addCommand(COMMAND_ABORT, new Abort(eventHandler));
-        commandFactory.addCommand(COMMAND_UNDO, new Undo(eventHandler));
-        commandFactory.addCommand(COMMAND_REDO, new Redo(eventHandler));
+        commandFactory.addCommand(COMMAND_UNDO, new Undo());
+        commandFactory.addCommand(COMMAND_REDO, new Redo());
         commandFactory.addCommand(COMMAND_QUALITY, new Quality(eventHandler));
 
         return commandFactory;
@@ -95,11 +96,11 @@ public class BlockLinesCommands extends CommandBase {
         return input + spaces;
     }
 
-    public void setEventHandler(BlockLinesEventHandler eventHandler) {
+    public void setEventHandler(ICommandEventListener eventHandler) {
         this.eventHandler = eventHandler;
     }
 
-    public BlockLinesEventHandler getEventHandler() {
+    public ICommandEventListener getEventHandler() {
         return this.eventHandler;
     }
 }
