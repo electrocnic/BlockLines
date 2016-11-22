@@ -3,16 +3,11 @@ package com.electrocnic.blocklines.Events;
 import com.electrocnic.blocklines.EditTools.*;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.GameType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -137,7 +132,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         return secondRow;
     }
 
-    public void setMode(Mode mode) {
+    public void setSubMode(Mode mode) {
         this.currentMode = mode;
     }
 
@@ -156,7 +151,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
 
 
 public class BlockLinesEventHandler implements ICommandEventListener {
-    private Map<String, Tool> selectables = null;
+    private Map<String, Tool> tools = null;
     private Map<String, IEventMethod> eventMethods = null;
 
     private short deStutter = 0;
@@ -164,7 +159,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
 
 
     public BlockLinesEventHandler() {
-        selectables = new HashMap<String, Tool>();
+        tools = new HashMap<String, Tool>();
         eventMethods = new HashMap<String, IEventMethod>();
         eventMethods.put(Event.MODE, this::setMode);
         eventMethods.put(Event.ABORT, this::resetSelection);
@@ -172,7 +167,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
     }
 
     public void addDrawable(String key, Tool drawable) {
-        this.selectables.put(key, drawable);
+        this.tools.put(key, drawable);
     }
 
     /**
@@ -182,7 +177,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
      */
     @Override
     public Tool getTool(String key) {
-        return selectables.get(key);
+        return tools.get(key);
     }
 
     @SubscribeEvent
@@ -195,11 +190,11 @@ public class BlockLinesEventHandler implements ICommandEventListener {
             if (deStutter >= 1) deStutter = 0;
             else {
                 if (ServerProxy.getWorld() != null) {
-                    ISelectable tool = selectables.get(currentMode);
+                    ISelectable tool = tools.get(currentMode);
                     if (tool != null) {
                         tool.performSelection(event.getPos(), event.getEntityPlayer());
                     } else {
-                        //TODO: print error message (fatal error, as this should never happen)
+                        event.getEntityPlayer().addChatMessage(new TextComponentString("Fatal error during selection in BlockLinesEventHandler occurred."));
                     }
                 }
                 deStutter++;
@@ -242,11 +237,11 @@ public class BlockLinesEventHandler implements ICommandEventListener {
      * @param argument Just an empty null object, as placeholder, otherwise the lambda would not work.
      */
     private void resetSelection(Object argument) {
-        selectables.get(currentMode).resetSelection();
+        tools.get(currentMode).resetSelection();
     }
 
 
-    //TODO: add setter/getter for currentMode via Interface.
+    //TODO: add setter/getter for currentMode via Interface. (for what??)
 
     public static BlockLinesEventHandler create() {
         BlockLinesEventHandler eventHandler = new BlockLinesEventHandler();

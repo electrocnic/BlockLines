@@ -16,8 +16,8 @@ public interface IFlag {
     void setFill(boolean fill);
     boolean isFill();
 
-    int setMode(int mode);
-    int getMode();
+    int setSubMode(int mode);
+    int getSubMode();
 
     void setInARow(boolean inARow);
     boolean isInARow();

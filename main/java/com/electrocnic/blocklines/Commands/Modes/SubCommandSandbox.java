@@ -29,7 +29,7 @@ public abstract class SubCommandSandbox implements ICommand {
      * @param mode The new mode. (See com.electrocnic.blocklines.EditTools.Mode for details)
      */
     protected void setMode(String mode) {
-        //this.eventHandler.setMode(mode);
+        //this.eventHandler.setSubMode(mode);
         Event<String> event = new Event<String>(Event.MODE, mode);
         this.eventHandler.onCommandEvent(event);
     }
@@ -90,7 +90,7 @@ public abstract class SubCommandSandbox implements ICommand {
     protected int setSubmode(String[] args) throws NumberFormatException{
         int submode = 0;
         submode = Integer.parseInt(args[2]); //throws exception.
-        submode = this.modeObject.setMode(submode);
+        submode = this.modeObject.setSubMode(submode);
         return submode;
     }
 

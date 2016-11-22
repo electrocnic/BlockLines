@@ -47,14 +47,13 @@ public class Cube extends Tool  {
 
     @Override
     public void performSelection(BlockPos pos, EntityPlayer player) {
-        //TODO
+        super.performSelection(pos, player);
     }
 
     @Override
     public void resetSelection() {
-        //TODO
+        super.resetSelection();
     }
-
 
     private boolean fillCubeAt(int x, int y, int z, List<BlockPos> selection) {
         return (x==selection.get(0).getX() || x==selection.get(1).getX()
@@ -64,12 +63,12 @@ public class Cube extends Tool  {
     }
 
     @Override
-    public int setMode(int mode) {
+    public int setSubMode(int mode) {
         return 0;
     }
 
     @Override
-    public int getMode() {
+    public int getSubMode() {
         return 0;
     }
 

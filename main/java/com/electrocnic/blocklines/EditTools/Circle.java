@@ -515,7 +515,7 @@ public class Circle extends Tool implements Qualifyable {
     }
 
     @Override
-    public int setMode(int mode) {
+    public int setSubMode(int mode) {
         if( mode>=MODE_FULL && mode<=MODES ) {
             this.mode = mode;
             return mode;
@@ -523,7 +523,7 @@ public class Circle extends Tool implements Qualifyable {
     }
 
     @Override
-    public int getMode() {
+    public int getSubMode() {
         return mode;
     }
 

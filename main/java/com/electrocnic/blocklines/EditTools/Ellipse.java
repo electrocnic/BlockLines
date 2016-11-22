@@ -49,7 +49,7 @@ public class Ellipse extends Tool implements Qualifyable {
     }
 
     @Override
-    public int setMode(int mode) {
+    public int setSubMode(int mode) {
         if( mode>=0 && mode<=3 ) {
             this.mode = mode;
         }
@@ -57,7 +57,7 @@ public class Ellipse extends Tool implements Qualifyable {
     }
 
     @Override
-    public int getMode() {
+    public int getSubMode() {
         return mode;
     }
 
