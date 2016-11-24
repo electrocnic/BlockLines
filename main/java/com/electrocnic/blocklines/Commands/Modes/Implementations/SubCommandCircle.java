@@ -2,11 +2,7 @@ package com.electrocnic.blocklines.Commands.Modes.Implementations;
 
 import com.electrocnic.blocklines.Commands.Modes.TemplateExecutive;
 import com.electrocnic.blocklines.EditTools.Circle;
-import com.electrocnic.blocklines.EditTools.Mode;
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
-
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 
 /**
  * Created by Andreas on 14.11.2016.
@@ -15,13 +11,13 @@ public class SubCommandCircle extends TemplateExecutive {
 
     private static final String NOT_SUPPORTED = "This mode is not supported for Circles.";
 
-    public SubCommandCircle(BlockLinesEventHandler eventHandler) {
-        super(eventHandler, eventHandler.getCircle());
+    public SubCommandCircle(ICommandEventListener eventHandler) {
+        super(eventHandler, eventHandler.getTool(Circle.IDENTIFIER));
     }
 
     @Override
     protected String useModeImpl() {
-        super.setMode(Mode.Circle);
+        super.setMode(Circle.IDENTIFIER);
         return "Mode set to Circle.";
     }
 

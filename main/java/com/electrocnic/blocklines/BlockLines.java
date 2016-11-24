@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * Created by Andreas on 29.10.2016.
  *
  * TODO:
+ * -Option to deactivate Blocklines itself (and leave mirror on)
  * -Mirror mode: set a mirror plane, using the mid-block and axis. Choose how many axis are active (via commands). Everything placed by BlockLines will be live-mirrored at those axises.
  *    (If possible: everything placed by hand would also be mirrored, and also be added to undo/redo history)
  *    Combined with copy-paste: copy paste would also be mirrored.
@@ -50,7 +51,7 @@ public class BlockLines {
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         proxy.preInit(e);
-        eventHandler = new BlockLinesEventHandler();
+        eventHandler = BlockLinesEventHandler.create();
         System.out.println("Called method: [preInit]");
     }
 

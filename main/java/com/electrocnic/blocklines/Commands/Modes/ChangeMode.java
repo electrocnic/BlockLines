@@ -30,7 +30,12 @@ public class ChangeMode implements ICommand {
             sender.addChatMessage(new TextComponentString("Mode needs one of these arguments: line, ellipse, circle, cube."));
             return;
         }
-        subcommands.get(args[1]).execute(server, sender, args);
+        ICommand command = subcommands.get(args[1]);
+        if(command != null) {
+            command.execute(server,sender,args);
+        }else {
+            sender.addChatMessage(new TextComponentString("Command with given argument does not exist."));
+        }
     }
 
     @Override

@@ -11,11 +11,14 @@ import java.util.List;
 /**
  * Created by Andreas on 07.11.2016.
  */
-public class Cube extends Tool implements Drawable {
+public class Cube extends Tool  {
 
     public static final String IDENTIFIER = "cube";
 
-    @Override
+    public Cube() {
+        super(2);
+    }
+
     public void draw(EntityPlayer player, List<BlockPos> selection, IBlockState blockType) {
         if(selection!=null &&selection.size()>=2) {
             int stepsX = Math.abs(selection.get(0).getX()-selection.get(1).getX());
@@ -42,6 +45,16 @@ public class Cube extends Tool implements Drawable {
         }
     }
 
+    @Override
+    public void performSelection(BlockPos pos, EntityPlayer player) {
+        super.performSelection(pos, player);
+    }
+
+    @Override
+    public void resetSelection() {
+        super.resetSelection();
+    }
+
     private boolean fillCubeAt(int x, int y, int z, List<BlockPos> selection) {
         return (x==selection.get(0).getX() || x==selection.get(1).getX()
         || y==selection.get(0).getY() || y==selection.get(1).getY()
@@ -50,17 +63,13 @@ public class Cube extends Tool implements Drawable {
     }
 
     @Override
-    public int getSelectionCount() {
-        return 2;
-    }
-
-    @Override
-    public int setMode(int mode) {
+    public int setSubMode(int mode) {
         return 0;
     }
 
     @Override
-    public int getMode() {
+    public int getSubMode() {
         return 0;
     }
+
 }

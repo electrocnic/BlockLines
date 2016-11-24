@@ -3,7 +3,7 @@ package com.electrocnic.blocklines.Commands;
 import com.electrocnic.blocklines.EditTools.Circle;
 import com.electrocnic.blocklines.EditTools.Ellipse;
 import com.electrocnic.blocklines.EditTools.Qualifyable;
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -17,13 +17,11 @@ import java.util.Map;
 public class Quality implements ICommand {
 
     private Map<String, Qualifyable> qualifyableMap = null;
-    private BlockLinesEventHandler eventHandler = null;
 
-    public Quality(BlockLinesEventHandler eventHandler) {
-        this.eventHandler = eventHandler;
+    public Quality(ICommandEventListener eventHandler) {
         qualifyableMap = new HashMap<String, Qualifyable>();
-        qualifyableMap.put(Ellipse.IDENTIFIER, eventHandler.getEllipse());
-        qualifyableMap.put(Circle.IDENTIFIER, eventHandler.getCircle());
+        qualifyableMap.put(Ellipse.IDENTIFIER, (Ellipse)eventHandler.getTool(Ellipse.IDENTIFIER));
+        qualifyableMap.put(Circle.IDENTIFIER, (Circle)eventHandler.getTool(Circle.IDENTIFIER));
     }
 
     @Override

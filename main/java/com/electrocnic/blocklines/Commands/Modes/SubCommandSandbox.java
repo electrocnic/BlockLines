@@ -2,8 +2,8 @@ package com.electrocnic.blocklines.Commands.Modes;
 
 import com.electrocnic.blocklines.Commands.ICommand;
 import com.electrocnic.blocklines.Commands.IFlag;
-import com.electrocnic.blocklines.EditTools.Mode;
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.Event;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 
 /**
  * This class is the base class for Sub-Commands. This is probably the subclass-sandbox pattern.
@@ -11,7 +11,7 @@ import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
  */
 public abstract class SubCommandSandbox implements ICommand {
 
-    protected BlockLinesEventHandler eventHandler = null;
+    protected ICommandEventListener eventHandler = null;
     protected IFlag modeObject = null;
 
     /**
@@ -19,7 +19,7 @@ public abstract class SubCommandSandbox implements ICommand {
      * @param eventHandler The event-handler, needed to set the Mode.
      * @param modeObject The "mode-object" (for example: Circle, Ellipse, Line, Cube, ...)
      */
-    public SubCommandSandbox(BlockLinesEventHandler eventHandler, IFlag modeObject) {
+    public SubCommandSandbox(ICommandEventListener eventHandler, IFlag modeObject) {
         this.eventHandler = eventHandler;
         this.modeObject = modeObject;
     }
@@ -28,8 +28,10 @@ public abstract class SubCommandSandbox implements ICommand {
      * Sets the mode in the event handler.
      * @param mode The new mode. (See com.electrocnic.blocklines.EditTools.Mode for details)
      */
-    protected void setMode(Mode mode) {
-        this.eventHandler.setMode(mode);
+    protected void setMode(String mode) {
+        //this.eventHandler.setSubMode(mode);
+        Event<String> event = new Event<String>(Event.MODE, mode);
+        this.eventHandler.onCommandEvent(event);
     }
 
     /**
@@ -47,8 +49,9 @@ public abstract class SubCommandSandbox implements ICommand {
      * @return The player feedback message whether this mode has been turned off or on.
      */
     protected String toggleInARow() {
-        this.eventHandler.setInARow(!this.eventHandler.isInARow());
-        return "Turned " + (eventHandler.isInARow() ? ("on") : ("off")) + " performing several lines in one take.";
+        //this.eventHandler.setInARow(!this.eventHandler.isInARow());
+        this.modeObject.setInARow(!this.modeObject.isInARow());
+        return "Turned " + (this.modeObject.isInARow() ? ("on") : ("off")) + " performing several lines in one take.";
     }
 
     /**
@@ -87,8 +90,18 @@ public abstract class SubCommandSandbox implements ICommand {
     protected int setSubmode(String[] args) throws NumberFormatException{
         int submode = 0;
         submode = Integer.parseInt(args[2]); //throws exception.
-        submode = this.modeObject.setMode(submode);
+        submode = this.modeObject.setSubMode(submode);
         return submode;
+    }
+
+    /**
+     * Sets the active row for Lines for inARow purposes.
+     * @param secondRow Whether the selection-sequence should be the first or the second one.
+     * @return The feedback message whether sequence is active.
+     */
+    protected String setSecondRow(boolean secondRow) {
+        this.modeObject.setSecondRow(secondRow);
+        return (this.modeObject.isSecondRow())?"Second":"First" + "selection sequence for multiple line creation is now active.";
     }
 
     //todo: implement other methods.

@@ -2,8 +2,7 @@ package com.electrocnic.blocklines.Commands.Modes.Implementations;
 
 import com.electrocnic.blocklines.Commands.Modes.TemplateExecutive;
 import com.electrocnic.blocklines.EditTools.Ellipse;
-import com.electrocnic.blocklines.EditTools.Mode;
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 
 /**
  * Created by Andreas on 14.11.2016.
@@ -12,13 +11,13 @@ public class SubCommandEllipse extends TemplateExecutive {
 
     private static final String NOT_SUPPORTED = "This mode is not supported for Ellipses.";
 
-    public SubCommandEllipse(BlockLinesEventHandler eventHandler) {
-        super(eventHandler, eventHandler.getEllipse());
+    public SubCommandEllipse(ICommandEventListener eventHandler) {
+        super(eventHandler, eventHandler.getTool(Ellipse.IDENTIFIER));
     }
 
     @Override
     protected String useModeImpl() {
-        super.setMode(Mode.Ellipse);
+        super.setMode(Ellipse.IDENTIFIER);
         return "Mode set to Ellipse.";
     }
 

@@ -1,24 +1,19 @@
 package com.electrocnic.blocklines.EditTools;
 
-import akka.japi.pf.FI;
-import com.electrocnic.blocklines.BlockLines;
 import com.electrocnic.blocklines.History.HWorld;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.World;
 
 import java.util.*;
 
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Circle extends Tool implements Drawable, Qualifyable{
+public class Circle extends Tool implements Qualifyable {
 
     public static final String IDENTIFIER = "circle";
 
@@ -27,6 +22,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
     private Map<Integer, Filter> filter = null;
     private boolean autoQuality = true;
 
+    /** A FULL circle, NOT a filled circle */
     public static final int MODE_FULL = 0;
     //public static final int MODE_FULL_FILL = MODE_FULL+1;
     public static final int MODE_SEGMENT_IN = MODE_FULL+1;
@@ -36,6 +32,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
     public static final int MODES = MODE_ONE_SEGMENT+1;
 
     public Circle() {
+        super(3);
         quality = Qualifyable.DEFAULT_QUALITY;
         filter = new HashMap<Integer, Filter>();
         filter.put(MODE_FULL, new FilterMode0());
@@ -47,7 +44,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
         autoQuality = true;
     }
 
-    @Override
+
     public void draw(EntityPlayer player, List<BlockPos> selection, IBlockState blockType) {
         boolean err = false;
 
@@ -332,17 +329,22 @@ public class Circle extends Tool implements Drawable, Qualifyable{
     }
 
 
+    @Override
+    public void performSelection(BlockPos pos, EntityPlayer player) {
+        super.performSelection(pos, player);
+    }
+
+    @Override
+    public void resetSelection() {
+        super.resetSelection();
+    }
+
 
     private boolean isAroundSelection(BlockPos block, BlockPos selection) {
         return (block.equals(selection) ||
                 (Math.abs(block.getX()-selection.getX()) <= 1 &&
                 Math.abs(block.getY()-selection.getY()) <= 1 &&
                 Math.abs(block.getZ()-selection.getZ()) <= 1 ));
-    }
-
-    @Override
-    public int getSelectionCount() {
-        return 3;
     }
 
     private double[] loadV( 	double ox, double oy, double oz,
@@ -514,17 +516,18 @@ public class Circle extends Tool implements Drawable, Qualifyable{
     }
 
     @Override
-    public int setMode(int mode) {
-        if( mode>=MODE_FULL && mode<=MODES ) {
+    public int setSubMode(int mode) {
+        if( mode>=MODE_FULL && mode<MODES ) {
             this.mode = mode;
             return mode;
         }else return this.mode;
     }
 
     @Override
-    public int getMode() {
+    public int getSubMode() {
         return mode;
     }
+
 }
 
 interface Filter {

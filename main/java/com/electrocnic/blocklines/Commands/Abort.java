@@ -1,6 +1,7 @@
 package com.electrocnic.blocklines.Commands;
 
-import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.Event;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -10,16 +11,17 @@ import net.minecraft.util.text.TextComponentString;
  */
 public class Abort implements ICommand {
 
-    private BlockLinesEventHandler eventHandler = null;
+    private ICommandEventListener eventHandler = null;
 
-    public Abort(BlockLinesEventHandler eventHandler) {
+    public Abort(ICommandEventListener eventHandler) {
         this.eventHandler = eventHandler;
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if(eventHandler!=null) {
-            eventHandler.resetSelection();
+            Event<String> event = new Event<>(Event.ABORT);
+            eventHandler.onCommandEvent(event);
             sender.addChatMessage(new TextComponentString("Selection reset."));
         }else {
             sender.addChatMessage(new TextComponentString("EventHandler not yet initialized."));
