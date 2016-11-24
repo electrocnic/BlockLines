@@ -1,5 +1,7 @@
 package com.electrocnic.blocklines.History;
 
+import com.electrocnic.blocklines.Mirror.IMirror;
+import com.electrocnic.blocklines.Mirror.Mirror;
 import com.sun.istack.internal.NotNull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
  * Created by Andreas on 02.11.2016.
  */
 public class HWorld {
+
+    private IMirror mirror = null;
 
     /**
      * Wrapper for Block positions with block types. Used to restore the correct blocktype at the correct position.
@@ -60,17 +64,30 @@ public class HWorld {
     private Stack<Blocks> undoHistory = null;
     private Stack<Blocks> redoHistory = null;
 
-    public HWorld(World world) {
+    public HWorld(World world, IMirror mirror) {
         this.world = world;
         //TODO: load stack from file.
         this.undoHistory = new Stack<>();
         this.redoHistory = new Stack<>();
+        this.mirror = mirror;
     }
 
-    public HWorld() {
+    /**
+     * HISTORY-CONSTRAINT: Need to set the mirror after this constructor!
+     */
+    public HWorld(IMirror mirror) {
+        this.mirror = mirror;
         this.undoHistory = new Stack<>();
         this.redoHistory = new Stack<>();
         //TODO: load stack from file.
+    }
+
+    public void setMirror(IMirror mirror) {
+        this.mirror = mirror;
+    }
+
+    public IMirror getMirror() {
+        return this.mirror;
     }
 
     public void setWorld(World world) {
@@ -78,29 +95,8 @@ public class HWorld {
     }
 
     /**
-     * Should not be invoked, as each single block would be stored as a single undo action.
-     * @param pos
-     * @param newState
-     * @param flags
-     * @return
-     */
-    private boolean setBlockState(@NotNull BlockPos pos,
-                                 IBlockState newState,
-                                 int flags) {
-        boolean b = false;
-
-        if(world!=null) {
-            //TODO: remember block state of pos.
-            //...
-            b = world.setBlockState(pos, newState, flags);
-
-        }
-
-        return b;
-    }
-
-    /**
-     * Should be used rather than setBlockState
+     * Invokes the mirror. The mirror will add blocks depending on its current settings. Then remembers the blocks'
+     * current states in the world for undo functionality. The sets each block in the world.
      * @param positions
      * @param newState
      * @param flags
@@ -110,6 +106,8 @@ public class HWorld {
                              IBlockState newState,
                              int flags) {
         if(world!=null) {
+            positions = mirror.mirror(positions);
+
             Blocks history = rememberStates(positions);
 
             undoHistory.push(history);
@@ -124,6 +122,12 @@ public class HWorld {
         }
     }
 
+    /**
+     * Just for undo/redo purposes, as a Blocks object also contains the block-type per block. No mirroring will be
+     * invoked here.
+     * @param blocks
+     * @param flags
+     */
     private void setBlocks(@NotNull Blocks blocks, int flags) {
         if(world!=null) {
             for(BlockPosType blockPosType : blocks.blocks) {

@@ -2,6 +2,8 @@ package com.electrocnic.blocklines.Proxy;
 
 import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
 import com.electrocnic.blocklines.History.HWorld;
+import com.electrocnic.blocklines.Mirror.IMirror;
+import com.electrocnic.blocklines.Mirror.Mirror;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -22,11 +24,13 @@ import java.util.UUID;
 public class ServerProxy extends CommonProxy   {
 
     private static HWorld world = null;
+    private static IMirror mirror = null;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
-        world = new HWorld();
+        mirror = new Mirror();
+        world = new HWorld(mirror);
     }
 
     @Mod.EventHandler
@@ -36,7 +40,8 @@ public class ServerProxy extends CommonProxy   {
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "FakePlayer");
         FakePlayer fakePlayer = new FakePlayer(worldServer, gameProfile);
         MinecraftServer minecraftServer = fakePlayer.mcServer;
-        if(!minecraftServer.getEntityWorld().isRemote) world = new HWorld(minecraftServer.getEntityWorld());
+        if(ServerProxy.mirror==null) ServerProxy.mirror = new Mirror();
+        if(!minecraftServer.getEntityWorld().isRemote) world = new HWorld(minecraftServer.getEntityWorld(), mirror);
     }
 
     @Mod.EventHandler
@@ -45,13 +50,16 @@ public class ServerProxy extends CommonProxy   {
     }
 
     public static HWorld getWorld() {
-        if(world==null) world = new HWorld();
+        if(world==null) {
+            world = new HWorld(mirror);
+        }
         return world;
     }
 
     public static void setWorld(World world) {
         if(!world.isRemote) {
-            if(ServerProxy.world==null) ServerProxy.world = new HWorld(world);
+            if(ServerProxy.mirror==null) ServerProxy.mirror = new Mirror();
+            if(ServerProxy.world==null) ServerProxy.world = new HWorld(world, mirror);
             else ServerProxy.world.setWorld(world);
         }
     }

@@ -22,6 +22,7 @@ public class Circle extends Tool implements Qualifyable {
     private Map<Integer, Filter> filter = null;
     private boolean autoQuality = true;
 
+    /** A FULL circle, NOT a filled circle */
     public static final int MODE_FULL = 0;
     //public static final int MODE_FULL_FILL = MODE_FULL+1;
     public static final int MODE_SEGMENT_IN = MODE_FULL+1;
@@ -330,12 +331,12 @@ public class Circle extends Tool implements Qualifyable {
 
     @Override
     public void performSelection(BlockPos pos, EntityPlayer player) {
-        //TODO
+        super.performSelection(pos, player);
     }
 
     @Override
     public void resetSelection() {
-        //TODO: reset
+        super.resetSelection();
     }
 
 
@@ -516,7 +517,7 @@ public class Circle extends Tool implements Qualifyable {
 
     @Override
     public int setSubMode(int mode) {
-        if( mode>=MODE_FULL && mode<=MODES ) {
+        if( mode>=MODE_FULL && mode<MODES ) {
             this.mode = mode;
             return mode;
         }else return this.mode;

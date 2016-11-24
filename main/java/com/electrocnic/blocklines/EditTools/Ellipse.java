@@ -29,12 +29,12 @@ public class Ellipse extends Tool implements Qualifyable {
 
     @Override
     public void performSelection(BlockPos pos, EntityPlayer player) {
-
+        super.performSelection(pos, player);
     }
 
     @Override
     public void resetSelection() {
-        //TODO
+        super.resetSelection();
     }
 
 
@@ -50,7 +50,7 @@ public class Ellipse extends Tool implements Qualifyable {
 
     @Override
     public int setSubMode(int mode) {
-        if( mode>=0 && mode<=3 ) {
+        if( mode>=0 && mode<=3 ) { //TODO: change to static fields.
             this.mode = mode;
         }
         return this.mode;
