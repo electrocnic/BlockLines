@@ -1,7 +1,8 @@
 package com.electrocnic.blocklines.History;
 
+import com.electrocnic.blocklines.Container.DetailedBlockPos;
+import com.electrocnic.blocklines.Container.IDetailedBlockPos;
 import com.electrocnic.blocklines.Mirror.IMirror;
-import com.electrocnic.blocklines.Mirror.Mirror;
 import com.sun.istack.internal.NotNull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -20,43 +21,30 @@ public class HWorld {
     private IMirror mirror = null;
 
     /**
-     * Wrapper for Block positions with block types. Used to restore the correct blocktype at the correct position.
-     */
-    class BlockPosType {
-        private BlockPos pos=null;
-        private IBlockState type=null;
-
-        public BlockPosType(BlockPos pos, IBlockState type) {
-            this.pos = pos;
-            this.type = type;
-        }
-    }
-
-    /**
      * Wrapper for a list of Blocks (BlockPosTypes). Used for undo/redo actions.
      */
     class Blocks {
-        private List<BlockPosType> blocks = null;
+        private List<IDetailedBlockPos> blocks = null;
 
-        public Blocks(List<BlockPosType> blocks) {
+        public Blocks(List<IDetailedBlockPos> blocks) {
             this.blocks = blocks;
         }
 
         public Blocks() {
-            this.blocks = new ArrayList<BlockPosType>();
+            this.blocks = new ArrayList<IDetailedBlockPos>();
         }
 
-        public void setBlocks(List<BlockPosType> blocks) {
+        public void setBlocks(List<IDetailedBlockPos> blocks) {
             this.blocks = blocks;
         }
 
-        public void addBlock(BlockPosType block) {
-            if(this.blocks==null) this.blocks = new ArrayList<BlockPosType>();
+        public void addBlock(IDetailedBlockPos block) {
+            if(this.blocks==null) this.blocks = new ArrayList<IDetailedBlockPos>();
             this.blocks.add(block);
         }
 
         public List<BlockPos> getPositions() {
-            return blocks.stream().map(block -> block.pos).collect(Collectors.toList());
+            return blocks.stream().map(IDetailedBlockPos::getPos).collect(Collectors.toList());
         }
     }
 
@@ -106,9 +94,10 @@ public class HWorld {
                              IBlockState newState,
                              int flags) {
         if(world!=null) {
-            positions = mirror.mirror(positions);
+            List<IDetailedBlockPos> detailedBlocks = DetailedBlockPos.convertBlocks(world, positions);
+            detailedBlocks = mirror.mirror(detailedBlocks);
 
-            Blocks history = rememberStates(positions);
+            Blocks history = rememberStates(detailedBlocks);
 
             undoHistory.push(history);
             redoHistory = new Stack<>();
@@ -130,8 +119,8 @@ public class HWorld {
      */
     private void setBlocks(@NotNull Blocks blocks, int flags) {
         if(world!=null) {
-            for(BlockPosType blockPosType : blocks.blocks) {
-                world.setBlockState(blockPosType.pos, blockPosType.type, flags);
+            for(IDetailedBlockPos blockPosType : blocks.blocks) {
+                world.setBlockState(blockPosType.getPos(), blockPosType.getState(), flags);
             }
         }
     }
@@ -146,10 +135,10 @@ public class HWorld {
      * @param positions
      * @return
      */
-    private Blocks rememberStates(List<BlockPos> positions) {
-        List<BlockPosType> positionsTypes = new ArrayList<>();
-        for(BlockPos pos : positions) {
-            positionsTypes.add(new BlockPosType(pos, world.getBlockState(pos)));
+    private Blocks rememberStates(List<IDetailedBlockPos> positions) {
+        List<IDetailedBlockPos> positionsTypes = new ArrayList<>();
+        for(IDetailedBlockPos pos : positions) {
+            positionsTypes.add(new DetailedBlockPos(pos));
         }
         return new Blocks(positionsTypes);
     }
@@ -167,7 +156,7 @@ public class HWorld {
             Blocks undoRedoBlocks = (undo?undoHistory:redoHistory).pop();
             if(redoHistory==null) redoHistory = new Stack<>();
             if(undoHistory==null) undoHistory = new Stack<>();
-            (undo?redoHistory:undoHistory).push(rememberStates(undoRedoBlocks.getPositions()));
+            (undo?redoHistory:undoHistory).push(rememberStates(undoRedoBlocks.blocks));
             setBlocks(undoRedoBlocks, 3);
         }
     }

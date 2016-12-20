@@ -1,5 +1,6 @@
 package com.electrocnic.blocklines.Mirror;
 
+import com.electrocnic.blocklines.Container.IDetailedBlockPos;
 import com.sun.istack.internal.NotNull;
 import net.minecraft.util.math.BlockPos;
 
@@ -15,7 +16,7 @@ public interface IMirror {
      * @param toBeMirrored A list of blocks which are to be mirrored.
      * @return The new list, at least with the elements of the input list. Never null.
      */
-    @NotNull List<BlockPos> mirror(@NotNull List<BlockPos> toBeMirrored);
+    @NotNull List<IDetailedBlockPos> mirror(@NotNull List<IDetailedBlockPos> toBeMirrored) throws UnsupportedOperationException;
 
     /**
      * Sets the mirror-axis.
