@@ -11,4 +11,8 @@ public interface IDetailedBlockPos {
     BlockPos getPos();
 
     IBlockState getState();
+
+    void setPos(BlockPos pos);
+
+    void setState(IBlockState state);
 }

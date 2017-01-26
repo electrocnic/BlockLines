@@ -27,6 +27,7 @@ public class BlockLinesCommands extends CommandBase {
     public static final String COMMAND_UNDO = "undo";
     public static final String COMMAND_REDO = "redo";
     public static final String COMMAND_QUALITY = "quality";
+    public static final String COMMAND_MIRROR = "mirror";
 
     private ICommandEventListener eventHandler = null;
 
@@ -78,6 +79,7 @@ public class BlockLinesCommands extends CommandBase {
         commandFactory.addCommand(COMMAND_UNDO, new Undo());
         commandFactory.addCommand(COMMAND_REDO, new Redo());
         commandFactory.addCommand(COMMAND_QUALITY, new Quality(eventHandler));
+        commandFactory.addCommand(COMMAND_MIRROR, new MirrorCommand(eventHandler));
 
         return commandFactory;
     }

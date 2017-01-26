@@ -66,4 +66,14 @@ public class DetailedBlockPos implements IDetailedBlockPos {
     public IBlockState getState() {
         return this.state;
     }
+
+    @Override
+    public void setPos(BlockPos pos) {
+        this.pos = pos;
+    }
+
+    @Override
+    public void setState(IBlockState state) {
+        this.state = state;
+    }
 }
