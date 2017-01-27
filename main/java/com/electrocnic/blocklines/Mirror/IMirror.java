@@ -49,4 +49,30 @@ public interface IMirror {
      * @param active True: mirror will return extended list depending on axis, false: Mirror will return the input list.
      */
     void activateMirror(boolean active);
+
+    boolean toggleMirror();
+
+    void toggleVerticalMirror();
+
+    void toggleHorizontalMirror();
+
+    /**
+     * This method should be invoked two times.
+     * The first invocation will set a, the second will set b of the mirror's axis.
+     * @param pos The position of the block in the world.
+     * @return True, if the selection is finished (selected b), false if a has been selected, but b is waiting for selection.
+     */
+    boolean performSelection(BlockPos pos);
+
+    /**
+     * Tells, whether the axis is valid, or a cube.
+     * @return False, if the axis is ok, true, if the axis is a cube.
+     */
+    boolean isInvalid();
+
+    /**
+     * Returns the selected Axis as a name (Either "Point", "Cube", "Plane" or "Line").
+     * @return The name.
+     */
+    String getAxisName();
 }

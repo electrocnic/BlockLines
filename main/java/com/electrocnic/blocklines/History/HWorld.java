@@ -60,6 +60,19 @@ public class HWorld {
         this.mirror = mirror;
     }
 
+    public HWorld(World world) {
+        this.world = world;
+        //TODO: load stack from file.
+        this.undoHistory = new Stack<>();
+        this.redoHistory = new Stack<>();
+    }
+
+    public HWorld() {
+        //TODO: load stack from file.
+        this.undoHistory = new Stack<>();
+        this.redoHistory = new Stack<>();
+    }
+
     /**
      * HISTORY-CONSTRAINT: Need to set the mirror after this constructor!
      */
@@ -83,29 +96,58 @@ public class HWorld {
     }
 
     /**
-     * Invokes the mirror. The mirror will add blocks depending on its current settings. Then remembers the blocks'
-     * current states in the world for undo functionality. The sets each block in the world.
-     * @param positions
-     * @param newState
-     * @param flags
+     * Converts the given positions to detailedBlockPos objects with the given state. Then calls setBlocks with these detailedBlockPos objects.
+     * @param positions The positions for the placed blocks in the world.
+     * @param newState The new state for all of the blocks.
+     * @param flags The update-behaviour flag in the world. (Should be 3 most of the times).
      * @return
      */
     public void setBlocks(@NotNull List<BlockPos> positions,
                              IBlockState newState,
                              int flags) {
         if(world!=null) {
-            List<IDetailedBlockPos> detailedBlocks = DetailedBlockPos.convertBlocks(world, positions);
-            detailedBlocks = mirror.mirror(detailedBlocks);
+            List<IDetailedBlockPos> detailedBlocks = DetailedBlockPos.convertBlocks(positions, newState); //get detailed blocks with the given state.
+            setBlocks(detailedBlocks, flags);
+        }
+    }
 
-            Blocks history = rememberStates(detailedBlocks);
+    /**
+     * Mirrors the given detailedBlocks with the current active mirror and remembers the current states of the world's blocks
+     * for the given positions. These are pushed to the undo stack. The mirrored blocks are then placed with their state.
+     * @param detailedBlocks Blocks with individual states (the states determine the blocks, the rest is the position).
+     * @param flags Should be 3 most of the time.
+     */
+    public void setBlocks(@NotNull List<IDetailedBlockPos> detailedBlocks, int flags) {
+        if(world!=null) {
+            //1. convert block positions of whatever to detailedBlockPositions (outside this method and take detailedBlocks as argument, so the list can vary in states.)
+            //2. mirror them and save in new list. this list contains the to-be-set blocks, not the current blocks in the world.
+            //3. remember the current state to each individual detailed block position
+            //4. push to undo stack
+            //5. set new blocks in the world.
+            //This enables the usage for live mirroring user-placed blocks.
 
+            if(mirror!=null) detailedBlocks = mirror.mirror(detailedBlocks);
+            else {
+                try{
+                    throw new NullPointerException("mirror is null");
+                }catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            List<IDetailedBlockPos> detailedUndoBlocks = DetailedBlockPos.convertDetailedBlocks(world, detailedBlocks);//DetailedBlockPos.convertBlocks(world, positions); //get detailed block positions of the current states, NOT the states after placement!!
+            //if(mirror!=null) detailedUndoBlocks = mirror.mirror(detailedUndoBlocks);
+            //detailedUndoBlocks = DetailedBlockPos.convertDetailedBlocks(world, detailedUndoBlocks); //get detailed block states of current blocks from the world. this time with the mirrored ones.
+
+            Blocks history = rememberStates(detailedUndoBlocks);
             undoHistory.push(history);
             redoHistory = new Stack<>();
 
-            for(BlockPos pos : positions) {
+
+            for (IDetailedBlockPos block : detailedBlocks) {
                 try {
-                    world.setBlockState(pos, newState, flags);
-                }catch(Exception e) {
+                    world.setBlockState(block.getPos(), block.getState(), flags);
+                } catch (Exception e) {
                 }
             }
         }
@@ -132,6 +174,7 @@ public class HWorld {
     /**
      * World must not be null to call this...
      * This generates a new Blocks object by a given BlockPos list.
+     * This will duplicate the data instead of referencing the given argument.
      * @param positions
      * @return
      */

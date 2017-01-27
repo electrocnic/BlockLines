@@ -71,7 +71,7 @@ public class BlockLines {
     public void serverLoad(FMLServerStartingEvent event)
     {
         // register server commands
-        ServerProxy.setWorld(event.getServer().getEntityWorld());
+        ServerProxy.setWorld(event.getServer().getEntityWorld(), eventHandler);
         event.registerServerCommand(BlockLinesCommands.init(eventHandler));
     }
 }

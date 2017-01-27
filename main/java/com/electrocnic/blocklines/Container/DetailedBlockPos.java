@@ -57,6 +57,39 @@ public class DetailedBlockPos implements IDetailedBlockPos {
         return detailedBlocks;
     }
 
+    /**
+     * Returns a new list containing every blockpos, coupled with the given state.
+     * @param poses The positions of the blocks.
+     * @param state The state for all of the blocks.
+     * @return
+     */
+    public static @NotNull List<IDetailedBlockPos> convertBlocks(@Nullable List<BlockPos> poses, @Nullable IBlockState state) {
+        List<IDetailedBlockPos> detailedBlocks = new ArrayList<IDetailedBlockPos>();
+
+        for(BlockPos pos : poses) {
+            detailedBlocks.add(new DetailedBlockPos(pos, state));
+        }
+
+        return detailedBlocks;
+    }
+
+    /**
+     * Returns a new list of detailedBlockPos objects given by the positions of another list of detailedBlockPos objects and
+     * the state-information for those positions by the world.
+     * @param world The world, needed to fetch the IBlockState
+     * @param detailedPoses The positions of the blocks.
+     * @return
+     */
+    public static @NotNull List<IDetailedBlockPos> convertDetailedBlocks(@NotNull World world, @Nullable List<IDetailedBlockPos> detailedPoses) {
+        List<IDetailedBlockPos> detailedBlocks = new ArrayList<IDetailedBlockPos>();
+
+        for(IDetailedBlockPos pos : detailedPoses) {
+            detailedBlocks.add(convertBlockPos(world, pos.getPos()));
+        }
+
+        return detailedBlocks;
+    }
+
     @Override
     public BlockPos getPos() {
         return this.pos;

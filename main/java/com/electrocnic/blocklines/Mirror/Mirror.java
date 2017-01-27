@@ -19,6 +19,7 @@ public class Mirror implements IMirror {
     //axis
     private BlockPos a = null;
     private BlockPos b = null;
+    private boolean aChanged = false;
 
     /**
      * 0 xy
@@ -76,6 +77,51 @@ public class Mirror implements IMirror {
     @Override
     public void activateMirror(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public boolean toggleMirror() {
+        this.active = !this.active;
+        return this.active;
+    }
+
+    @Override
+    public void toggleVerticalMirror() {
+        this.verticalMirror = !this.verticalMirror;
+    }
+
+    @Override
+    public void toggleHorizontalMirror() {
+        this.horizontalMirror = !this.horizontalMirror;
+    }
+
+    @Override
+    public boolean performSelection(BlockPos pos) {
+        if(!aChanged) {
+            this.a = pos;
+            aChanged = true;
+            return false;
+        }else {
+            this.b = pos;
+            aChanged = false;
+            return true;
+        }
+    }
+
+    @Override
+    public boolean isInvalid() {
+        return reflectedBy() == Reflection.Cube;
+    }
+
+    @Override
+    public String getAxisName() {
+        String name = "";
+        Reflection axis = reflectedBy();
+        if(axis == Reflection.XYPlane || axis == Reflection.XZPlane || axis == Reflection.ZYPlane) name = "Plane (1 copy)";
+        else if(axis == Reflection.YLine || axis == Reflection.XLine || axis == Reflection.ZLine) name = "Line (3 copies)";
+        else if(axis == Reflection.Point) name = "Point (7 copies)";
+        else name = "Cube (error)";
+        return name;
     }
 
 
@@ -209,6 +255,7 @@ public class Mirror implements IMirror {
             //block.getState().withRotation();
 
 
+            //TODO: seems to not work. try with rotation? 
             EnumFacing newFacing = block.getState().getValue(HORIZONTAL_FACING);
             newFacing = mirrorFacing(newFacing);
             IBlockState newState = block.getState().withProperty(HORIZONTAL_FACING, newFacing);

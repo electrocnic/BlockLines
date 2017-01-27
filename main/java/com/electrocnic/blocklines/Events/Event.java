@@ -7,6 +7,7 @@ public class Event<T> {
 
     public static final String MODE = "mode";
     public static final String ABORT = "abort";
+    public static final String MIRROR = "mirror";
 
     private String key = null;
     private T description = null;

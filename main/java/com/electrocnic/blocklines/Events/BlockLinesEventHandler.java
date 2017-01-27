@@ -1,6 +1,7 @@
 package com.electrocnic.blocklines.Events;
 
 import com.electrocnic.blocklines.EditTools.*;
+import com.electrocnic.blocklines.Mirror.IMirror;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentString;
@@ -153,6 +154,8 @@ public class BlockLinesEventHandler implements ICommandEventListener {
 public class BlockLinesEventHandler implements ICommandEventListener {
     private Map<String, Tool> tools = null;
     private Map<String, IEventMethod> eventMethods = null;
+    private IMirror mirror = null;
+    private boolean mirrorJustToggledOn = false;
 
     private short deStutter = 0;
     private String currentMode = Line.IDENTIFIER;
@@ -163,6 +166,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         eventMethods = new HashMap<String, IEventMethod>();
         eventMethods.put(Event.MODE, this::setMode);
         eventMethods.put(Event.ABORT, this::resetSelection);
+        eventMethods.put(Event.MIRROR, this::mirrorSettings);
         //TODO: add methods if needed
     }
 
@@ -180,6 +184,11 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         return tools.get(key);
     }
 
+    @Override
+    public void setMirror(IMirror mirror) {
+        this.mirror = mirror;
+    }
+
     @SubscribeEvent
     public void onClick(PlayerInteractEvent event) {
         //1. destutter.
@@ -190,11 +199,29 @@ public class BlockLinesEventHandler implements ICommandEventListener {
             if (deStutter >= 1) deStutter = 0;
             else {
                 if (ServerProxy.getWorld() != null) {
-                    ISelectable tool = tools.get(currentMode);
-                    if (tool != null) {
-                        tool.performSelection(event.getPos(), event.getEntityPlayer());
-                    } else {
-                        event.getEntityPlayer().addChatMessage(new TextComponentString("Fatal error during selection in BlockLinesEventHandler occurred."));
+                    if(mirrorJustToggledOn) {
+                        if(mirror != null) {
+                            if(mirror.performSelection(event.getPos())) {
+                                mirrorJustToggledOn = false;
+                                event.getEntityPlayer().addChatMessage(new TextComponentString("Mirror Axis selected: Mirror by " + mirror.getAxisName()));
+                                if(mirror.isInvalid()) {
+                                    event.getEntityPlayer().addChatMessage(new TextComponentString("Error: Axis cannot form a cube. You must either select a point (a=b), a line or a plane.\n" +
+                                            "The mirror has been deactivated. Activate again to select a new axis."));
+                                    mirror.activateMirror(false);
+                                }
+                            }else{
+                                event.getEntityPlayer().addChatMessage(new TextComponentString("First mirror Axis point selected..."));
+                            }
+                        }else {
+                            event.getEntityPlayer().addChatMessage(new TextComponentString("Fatal error during selection for the mirror in BlockLinesEventHandler occurred."));
+                        }
+                    }else {
+                        ISelectable tool = tools.get(currentMode);
+                        if (tool != null) {
+                            tool.performSelection(event.getPos(), event.getEntityPlayer());
+                        } else {
+                            event.getEntityPlayer().addChatMessage(new TextComponentString("Fatal error during selection in BlockLinesEventHandler occurred."));
+                        }
                     }
                 }
                 deStutter++;
@@ -240,6 +267,21 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         tools.get(currentMode).resetSelection();
     }
 
+    /**
+     * Toggles mirror on of, if the arguments are empty.
+     * Toggles horizontal or vertical mirror on or off if the argument is h or v.
+     * @param arguments
+     */
+    private void mirrorSettings(Object arguments) {
+        String args = (String) arguments;
+        if(args==null || args.isEmpty() || args.equalsIgnoreCase(" ")) {
+            mirrorJustToggledOn = mirror.toggleMirror();
+        }else if(args.equalsIgnoreCase("h")) {
+            mirror.toggleHorizontalMirror();
+        }else if(args.equalsIgnoreCase("v")) {
+            mirror.toggleVerticalMirror();
+        }
+    }
 
     //TODO: add setter/getter for currentMode via Interface. (for what??)
 
