@@ -50,6 +50,8 @@ public interface IMirror {
      */
     void activateMirror(boolean active);
 
+    boolean isActive();
+
     boolean toggleMirror();
 
     boolean toggleVerticalMirror();

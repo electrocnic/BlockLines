@@ -3,12 +3,19 @@ package com.electrocnic.blocklines.Events;
 import com.electrocnic.blocklines.EditTools.*;
 import com.electrocnic.blocklines.Mirror.IMirror;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -229,6 +236,27 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         }
     }
 
+    //TODO: remove mirrored blocks if player removes a block by hand. (only remove blocks which are placed by mirror or let player choose via option).
+
+    @SubscribeEvent
+    public void onBlockPlaceEvent(BlockEvent.PlaceEvent event) {
+        //event.getPlayer()
+        //event.getPlayer().addChatMessage(new TextComponentString("Placed block."));
+        if(mirror.isActive() && !mirror.isInvalid()) {
+            BlockPos pos = event.getPos();
+            IBlockState state = event.getPlacedBlock();
+            /*if (event.isCancelable()) {
+                event.setCanceled(true);
+            }*/
+            //IBlockState oldState = ServerProxy.getCurrentState(pos);
+
+            //event.getPlayer().addChatMessage(new TextComponentString("Placed block at " + pos.toString()));
+            List<BlockPos> singleBlockList = new ArrayList<BlockPos>();
+            singleBlockList.add(pos);
+            ServerProxy.getWorld().setBlocks(singleBlockList, state, 3);
+        }
+    }
+
     /**
      * Whenever an command has been made by the player which affects properties of the eventHandler directly (for
      * example and for now the current mode), this method will be invoked. This method looks, if there is a method
@@ -293,8 +321,6 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         }
         return "Error in mirrorSettings";
     }
-
-    //TODO: add setter/getter for currentMode via Interface. (for what??)
 
     public static BlockLinesEventHandler create() {
         BlockLinesEventHandler eventHandler = new BlockLinesEventHandler();

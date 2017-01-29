@@ -3,7 +3,12 @@ package com.electrocnic.blocklines.Mirror;
 import com.electrocnic.blocklines.Container.DetailedBlockPos;
 import com.electrocnic.blocklines.Container.IDetailedBlockPos;
 import com.sun.istack.internal.NotNull;
+import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.block.BlockSlab;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +18,7 @@ import java.util.List;
 
 /**
  * Created by Andreas on 24.11.2016.
+ *
  */
 public class Mirror implements IMirror {
 
@@ -30,7 +36,7 @@ public class Mirror implements IMirror {
 
     //flags
     private boolean horizontalMirror = true;
-    private boolean verticalMirror = false;
+    private boolean verticalMirror = true;
     private boolean active = false;
 
     public Mirror() {
@@ -77,6 +83,11 @@ public class Mirror implements IMirror {
     @Override
     public void activateMirror(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public boolean isActive() {
+        return this.active;
     }
 
     @Override
@@ -246,37 +257,52 @@ public class Mirror implements IMirror {
             plane = reflectedBy();
         }
 
-        PropertyDirection HORIZONTAL_FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-        PropertyDirection VERTICAL_FACING = PropertyDirection.create("facing", EnumFacing.Plane.VERTICAL);
+        PropertyEnum TOP_BOTTOM_STAIRS = PropertyEnum.create("half", BlockStairs.EnumHalf.class);
+        PropertyEnum TOP_BOTTOM_SLABS = PropertyEnum.create("half", BlockSlab.EnumBlockHalf.class);
 
         List<IDetailedBlockPos> mirroredOnly = new ArrayList<IDetailedBlockPos>();
 
         //perform the actual mirroring.
         for(IDetailedBlockPos block : toBeMirrored) {
             IBlockState newState = block.getState();
-            //block.getState().withRotation();
-
-
-            //TODO: seems to not work. try with rotation?
-            //EnumFacing newFacing = block.getState().getValue(HORIZONTAL_FACING);
-            //newFacing = mirrorFacing(newFacing);
-            //IBlockState newState = block.getState().withProperty(HORIZONTAL_FACING, newFacing);
-
-            //TODO: if mirrored vertically: flip vertically.
-
             BlockPos newPos = block.getPos();
 
             switch (plane) {
                 case XYPlane:
                     newPos = new BlockPos(newPos.getX(), newPos.getY(), (2*(a.getZ()-newPos.getZ()))+newPos.getZ());
-                    newState = block.getState().withMirror(net.minecraft.util.Mirror.FRONT_BACK);
+                    newState = block.getState().withMirror(net.minecraft.util.Mirror.LEFT_RIGHT);
                     break;
                 case ZYPlane:
                     newPos = new BlockPos((2*(a.getX()-newPos.getX())+newPos.getX()), newPos.getY(), newPos.getZ());
-                    newState = block.getState().withMirror(net.minecraft.util.Mirror.LEFT_RIGHT);
+                    newState = block.getState().withMirror(net.minecraft.util.Mirror.FRONT_BACK);
                     break;
                 case XZPlane:
                     newPos = new BlockPos(newPos.getX(), (2*(a.getY()-newPos.getY())+newPos.getY()), newPos.getZ());
+                    if(verticalMirror) {
+                        Comparable propStairs = newState.getProperties().get(TOP_BOTTOM_STAIRS);
+                        Comparable propSlabs = newState.getProperties().get(TOP_BOTTOM_SLABS);
+                        if(propStairs!=null) {
+                            BlockStairs.EnumHalf stairs = (BlockStairs.EnumHalf) propStairs;
+                            switch (stairs) {
+                                case BOTTOM:
+                                    newState = newState.withProperty(TOP_BOTTOM_STAIRS, BlockStairs.EnumHalf.TOP);
+                                    break;
+                                case TOP:
+                                    newState = newState.withProperty(TOP_BOTTOM_STAIRS, BlockStairs.EnumHalf.BOTTOM);
+                                    break;
+                            }
+                        }else if(propSlabs!=null) {
+                            BlockSlab.EnumBlockHalf slabs = (BlockSlab.EnumBlockHalf) propSlabs;
+                            switch (slabs) {
+                                case BOTTOM:
+                                    newState = newState.withProperty(TOP_BOTTOM_SLABS, BlockSlab.EnumBlockHalf.TOP);
+                                    break;
+                                case TOP:
+                                    newState = newState.withProperty(TOP_BOTTOM_SLABS, BlockSlab.EnumBlockHalf.BOTTOM);
+                                    break;
+                            }
+                        }
+                    }
                     //newState = block.getState().withMirror(net.minecraft.util.Mirror.);   UP_DOWN???
                     break;
                 default:

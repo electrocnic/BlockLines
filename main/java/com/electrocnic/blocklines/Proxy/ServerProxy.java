@@ -6,7 +6,9 @@ import com.electrocnic.blocklines.History.HWorld;
 import com.electrocnic.blocklines.Mirror.IMirror;
 import com.electrocnic.blocklines.Mirror.Mirror;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -100,6 +102,10 @@ public class ServerProxy extends CommonProxy   {
         FakePlayer fakePlayer = new FakePlayer(worldServer, gameProfile);
         MinecraftServer minecraftServer = fakePlayer.mcServer;
         return minecraftServer;
+    }
+
+    public static IBlockState getCurrentState(BlockPos pos) {
+        return world.getBlockState(pos);
     }
 
 }

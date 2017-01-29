@@ -126,7 +126,7 @@ public class HWorld {
             //5. set new blocks in the world.
             //This enables the usage for live mirroring user-placed blocks.
 
-            if(mirror!=null) detailedBlocks = mirror.mirror(detailedBlocks);
+            if(mirror!=null && !mirror.isInvalid()) detailedBlocks = mirror.mirror(detailedBlocks);
             else {
                 try{
                     throw new NullPointerException("mirror is null");
@@ -181,7 +181,7 @@ public class HWorld {
     private Blocks rememberStates(List<IDetailedBlockPos> positions) {
         List<IDetailedBlockPos> positionsTypes = new ArrayList<>();
         for(IDetailedBlockPos pos : positions) {
-            positionsTypes.add(new DetailedBlockPos(pos));
+            positionsTypes.add(new DetailedBlockPos(pos.getPos(), world.getBlockState(pos.getPos())));
         }
         return new Blocks(positionsTypes);
     }
