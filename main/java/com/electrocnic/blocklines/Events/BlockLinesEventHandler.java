@@ -239,23 +239,26 @@ public class BlockLinesEventHandler implements ICommandEventListener {
      *              Event.MODE, this will set the mode to circle for example.
      */
     @Override
-    public void onCommandEvent(Event event) {
+    public String onCommandEvent(Event event) {
         IEventMethod method = this.eventMethods.get(event.getKey());
         if(method!=null) {
-            method.adoptSettings(event.getDescription());
+            return method.adoptSettings(event.getDescription());
         }
+        return "Error in onCommandEvent.";
     }
 
     /**
      * Sets the current mode of the Mod and resets the selection for that mode.
      * @param mode Must be one of the IDENTIFIERS of either Circle, Line, Ellipse, Cube or other future adds...
      */
-    private void setMode(Object mode) {
+    private String setMode(Object mode) {
         String castedMode = (String) mode;
         if(castedMode != null) {
             this.currentMode = castedMode;
             resetSelection(null);
+            return "Selection reset. Mode set to " + castedMode;
         }
+        return "Error in setMode.";
     }
 
     /**
@@ -263,8 +266,9 @@ public class BlockLinesEventHandler implements ICommandEventListener {
      * Resets the selection only for the current mode.
      * @param argument Just an empty null object, as placeholder, otherwise the lambda would not work.
      */
-    private void resetSelection(Object argument) {
+    private String resetSelection(Object argument) {
         tools.get(currentMode).resetSelection();
+        return "Selection reset.";
     }
 
     /**
@@ -272,15 +276,22 @@ public class BlockLinesEventHandler implements ICommandEventListener {
      * Toggles horizontal or vertical mirror on or off if the argument is h or v.
      * @param arguments
      */
-    private void mirrorSettings(Object arguments) {
+    private String mirrorSettings(Object arguments) {
         String args = (String) arguments;
         if(args==null || args.isEmpty() || args.equalsIgnoreCase(" ")) {
             mirrorJustToggledOn = mirror.toggleMirror();
+            return "Toggled " + (mirrorJustToggledOn?"on":"off") + " mirror." + (mirrorJustToggledOn?" Please select the mirror axis now.":"");
         }else if(args.equalsIgnoreCase("h")) {
-            mirror.toggleHorizontalMirror();
+            boolean on = mirror.toggleHorizontalMirror();
+            return "Toggled horizontal mirror " + (on?"on.":"off.");
         }else if(args.equalsIgnoreCase("v")) {
-            mirror.toggleVerticalMirror();
+            boolean on = mirror.toggleVerticalMirror();
+            return "Toggled vertical mirror " + (on ? "on." : "off.");
+        }else if(args.equalsIgnoreCase("s")) {
+            mirrorJustToggledOn = true;
+            return "Please select the mirror axis now.";
         }
+        return "Error in mirrorSettings";
     }
 
     //TODO: add setter/getter for currentMode via Interface. (for what??)

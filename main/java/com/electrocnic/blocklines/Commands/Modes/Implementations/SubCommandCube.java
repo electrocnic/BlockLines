@@ -17,8 +17,7 @@ public class SubCommandCube extends TemplateExecutive {
 
     @Override
     protected String useModeImpl() {
-        super.setMode(Cube.IDENTIFIER);
-        return "Mode set to Cube.";
+        return super.setMode(Cube.IDENTIFIER);
     }
 
     @Override

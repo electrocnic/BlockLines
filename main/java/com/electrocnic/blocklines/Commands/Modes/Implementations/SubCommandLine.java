@@ -17,8 +17,7 @@ public class SubCommandLine extends TemplateExecutive {
 
     @Override
     protected String useModeImpl() {
-        super.setMode(Line.IDENTIFIER);
-        return "Mode set to Line.";
+        return super.setMode(Line.IDENTIFIER);
     }
 
     @Override

@@ -21,8 +21,8 @@ public class Abort implements ICommand {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if(eventHandler!=null) {
             Event<String> event = new Event<>(Event.ABORT);
-            eventHandler.onCommandEvent(event);
-            sender.addChatMessage(new TextComponentString("Selection reset."));
+            String result = eventHandler.onCommandEvent(event);
+            sender.addChatMessage(new TextComponentString(result));
         }else {
             sender.addChatMessage(new TextComponentString("EventHandler not yet initialized."));
         }

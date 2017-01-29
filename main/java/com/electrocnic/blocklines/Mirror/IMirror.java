@@ -52,9 +52,9 @@ public interface IMirror {
 
     boolean toggleMirror();
 
-    void toggleVerticalMirror();
+    boolean toggleVerticalMirror();
 
-    void toggleHorizontalMirror();
+    boolean toggleHorizontalMirror();
 
     /**
      * This method should be invoked two times.

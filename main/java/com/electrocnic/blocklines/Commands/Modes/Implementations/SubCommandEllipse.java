@@ -17,8 +17,7 @@ public class SubCommandEllipse extends TemplateExecutive {
 
     @Override
     protected String useModeImpl() {
-        super.setMode(Ellipse.IDENTIFIER);
-        return "Mode set to Ellipse.";
+        return super.setMode(Ellipse.IDENTIFIER);
     }
 
     @Override

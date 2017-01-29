@@ -5,5 +5,10 @@ package com.electrocnic.blocklines.Events;
  */
 @FunctionalInterface
 public interface IEventMethod {
-    void adoptSettings(Object argument);
+    /**
+     * Adopts settings for different objects, on user-input.
+     * @param argument Most of the times a string argument for the settings.
+     * @return A message to the player.
+     */
+    String adoptSettings(Object argument);
 }

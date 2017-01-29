@@ -86,13 +86,15 @@ public class Mirror implements IMirror {
     }
 
     @Override
-    public void toggleVerticalMirror() {
+    public boolean toggleVerticalMirror() {
         this.verticalMirror = !this.verticalMirror;
+        return this.verticalMirror;
     }
 
     @Override
-    public void toggleHorizontalMirror() {
+    public boolean toggleHorizontalMirror() {
         this.horizontalMirror = !this.horizontalMirror;
+        return this.horizontalMirror;
     }
 
     @Override
@@ -251,14 +253,14 @@ public class Mirror implements IMirror {
 
         //perform the actual mirroring.
         for(IDetailedBlockPos block : toBeMirrored) {
-            //block.getState().withMirror()
+            IBlockState newState = block.getState();
             //block.getState().withRotation();
 
 
-            //TODO: seems to not work. try with rotation? 
-            EnumFacing newFacing = block.getState().getValue(HORIZONTAL_FACING);
-            newFacing = mirrorFacing(newFacing);
-            IBlockState newState = block.getState().withProperty(HORIZONTAL_FACING, newFacing);
+            //TODO: seems to not work. try with rotation?
+            //EnumFacing newFacing = block.getState().getValue(HORIZONTAL_FACING);
+            //newFacing = mirrorFacing(newFacing);
+            //IBlockState newState = block.getState().withProperty(HORIZONTAL_FACING, newFacing);
 
             //TODO: if mirrored vertically: flip vertically.
 
@@ -266,13 +268,16 @@ public class Mirror implements IMirror {
 
             switch (plane) {
                 case XYPlane:
-                    newPos.add(0, 0, 2*(a.getZ()-newPos.getZ()));
+                    newPos = new BlockPos(newPos.getX(), newPos.getY(), (2*(a.getZ()-newPos.getZ()))+newPos.getZ());
+                    newState = block.getState().withMirror(net.minecraft.util.Mirror.FRONT_BACK);
                     break;
                 case ZYPlane:
-                    newPos.add(2*(a.getX()-newPos.getX()), 0, 0);
+                    newPos = new BlockPos((2*(a.getX()-newPos.getX())+newPos.getX()), newPos.getY(), newPos.getZ());
+                    newState = block.getState().withMirror(net.minecraft.util.Mirror.LEFT_RIGHT);
                     break;
                 case XZPlane:
-                    newPos.add(0, 2*(a.getY()-newPos.getY()), 0);
+                    newPos = new BlockPos(newPos.getX(), (2*(a.getY()-newPos.getY())+newPos.getY()), newPos.getZ());
+                    //newState = block.getState().withMirror(net.minecraft.util.Mirror.);   UP_DOWN???
                     break;
                 default:
                     throw new UnsupportedOperationException("Mirror operation in planeReflection not supported: " + plane);
@@ -283,6 +288,7 @@ public class Mirror implements IMirror {
         }
 
         mirrored.addAll(mirroredOnly);
+        mirrored.addAll(toBeMirrored);
         return mirrored;
     }
 

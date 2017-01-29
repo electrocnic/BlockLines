@@ -28,10 +28,10 @@ public abstract class SubCommandSandbox implements ICommand {
      * Sets the mode in the event handler.
      * @param mode The new mode. (See com.electrocnic.blocklines.EditTools.Mode for details)
      */
-    protected void setMode(String mode) {
+    protected String setMode(String mode) {
         //this.eventHandler.setSubMode(mode);
         Event<String> event = new Event<String>(Event.MODE, mode);
-        this.eventHandler.onCommandEvent(event);
+        return this.eventHandler.onCommandEvent(event);
     }
 
     /**
