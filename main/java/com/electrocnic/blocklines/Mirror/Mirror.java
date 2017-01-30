@@ -46,7 +46,7 @@ public class Mirror implements IMirror {
                 switch (reflectedBy()) {
                     case Cube: return toBeMirrored;
                     case Point: return pointReflection(toBeMirrored);
-                    case YLine: return lineReflection(toBeMirrored); //TODO: maybe more parameters for direction.
+                    case YLine: return lineReflection(toBeMirrored);
                     case ZLine: return lineReflection(toBeMirrored);
                     case XLine: return lineReflection(toBeMirrored);
                     case ZYPlane: return planeReflection(toBeMirrored);
