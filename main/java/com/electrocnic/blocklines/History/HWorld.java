@@ -48,6 +48,22 @@ public class HWorld {
         }
     }
 
+    /**
+     * Removes the oldest element in the history when a certain amount of elements is pushed onto the stack.
+     * @param <T>
+     */
+    class FixedStack<T> extends Stack<T> {
+        private int FIXED_SIZE = 100;
+
+        @Override
+        public T push(T item) {
+            if (this.size() >= FIXED_SIZE) {
+                this.removeElementAt(0);
+            }
+            return super.push(item);
+        }
+    }
+
     private World world = null;
     private Stack<Blocks> undoHistory = null;
     private Stack<Blocks> redoHistory = null;
@@ -55,22 +71,23 @@ public class HWorld {
     public HWorld(World world, IMirror mirror) {
         this.world = world;
         //TODO: load stack from file.
-        this.undoHistory = new Stack<>();
-        this.redoHistory = new Stack<>();
+        this.undoHistory = new FixedStack<>();
+        this.redoHistory = new FixedStack<>();
         this.mirror = mirror;
+
     }
 
     public HWorld(World world) {
         this.world = world;
         //TODO: load stack from file.
-        this.undoHistory = new Stack<>();
-        this.redoHistory = new Stack<>();
+        this.undoHistory = new FixedStack<>();
+        this.redoHistory = new FixedStack<>();
     }
 
     public HWorld() {
         //TODO: load stack from file.
-        this.undoHistory = new Stack<>();
-        this.redoHistory = new Stack<>();
+        this.undoHistory = new FixedStack<>();
+        this.redoHistory = new FixedStack<>();
     }
 
     /**
@@ -78,8 +95,8 @@ public class HWorld {
      */
     public HWorld(IMirror mirror) {
         this.mirror = mirror;
-        this.undoHistory = new Stack<>();
-        this.redoHistory = new Stack<>();
+        this.undoHistory = new FixedStack<>();
+        this.redoHistory = new FixedStack<>();
         //TODO: load stack from file.
     }
 
@@ -154,7 +171,7 @@ public class HWorld {
                 Blocks history = rememberStates(detailedUndoBlocks);
                 if (oldState != null) history.blocks.get(history.blocks.size() - 1).setState(oldState);
                 undoHistory.push(history);
-                redoHistory = new Stack<>();
+                redoHistory = new FixedStack<>();
 
 
                 for (IDetailedBlockPos block : detailedBlocks) {
@@ -200,21 +217,24 @@ public class HWorld {
         return new Blocks(positionsTypes);
     }
 
-    public void undo() {
-        undoRedo(true);
+    public String undo() {
+        return undoRedo(true);
     }
 
-    public void redo() {
-        undoRedo(false);
+    public String redo() {
+        return undoRedo(false);
     }
 
-    private void undoRedo(boolean undo) {
+    private String undoRedo(boolean undo) {
         if(undo && undoHistory!=null && !undoHistory.isEmpty() || !undo && redoHistory!=null && !redoHistory.isEmpty()) {
             Blocks undoRedoBlocks = (undo?undoHistory:redoHistory).pop();
-            if(redoHistory==null) redoHistory = new Stack<>();
-            if(undoHistory==null) undoHistory = new Stack<>();
+            if(redoHistory==null) redoHistory = new FixedStack<>();
+            if(undoHistory==null) undoHistory = new FixedStack<>();
             (undo?redoHistory:undoHistory).push(rememberStates(undoRedoBlocks.blocks));
             setBlocks(undoRedoBlocks, 3);
+        }else{
+            return "Nothing to un-/redo.";
         }
+        return "";
     }
 }
