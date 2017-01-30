@@ -90,12 +90,25 @@ public class BlockLinesCommands extends CommandBase {
         commandFactory.addCommand(COMMAND_REDO, new Redo());
         commandFactory.addCommand(COMMAND_QUALITY, new Quality(eventHandler));
         commandFactory.addCommand(COMMAND_MIRROR, new MirrorCommand(eventHandler));
-        commandFactory.addCommand(COMMAND_HELP, new HelpCommand());
+        commandFactory.addCommand(COMMAND_HELP, commandFactory::printHelpText);
 
         return commandFactory;
     }
 
-
+    private void printHelpText(MinecraftServer server, ICommandSender sender, String[] args) {
+        if(args==null || args.length<=1) {
+            sender.addChatMessage(new TextComponentString("Usage: /bl help command\n" +
+                    "Available commands: "
+                    + BlockLinesCommands.getAvailableCommands()));
+        }else if(commands.get(args[1]) == null) {
+            sender.addChatMessage(new TextComponentString("Command unknown. Available Commands:\n"
+                    + BlockLinesCommands.getAvailableCommands()));
+        } else {
+            sender.addChatMessage(new TextComponentString("Usage:\n" +
+                    "\n" +
+                    commands.get(args[1])));
+        }
+    }
 
     public static String addSpaces(String input) {
         return addSpaces(input, 2);
