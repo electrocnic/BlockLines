@@ -28,6 +28,7 @@ public class BlockLinesCommands extends CommandBase {
     public static final String COMMAND_REDO = "redo";
     public static final String COMMAND_QUALITY = "quality";
     public static final String COMMAND_MIRROR = "mirror";
+    public static final String COMMAND_HELP = "help";
 
     private ICommandEventListener eventHandler = null;
 
@@ -44,6 +45,15 @@ public class BlockLinesCommands extends CommandBase {
     public void addCommand(String name, ICommand command) {
         if(commands==null) commands = new HashMap<String, ICommand>();
         commands.put(name, command);
+    }
+
+    public static String getAvailableCommands() {
+        return "" + BlockLinesCommands.COMMAND_ABORT + ", "
+                + BlockLinesCommands.COMMAND_QUALITY + ", "
+                + BlockLinesCommands.COMMAND_MODE + ", "
+                + BlockLinesCommands.COMMAND_MIRROR + ", "
+                + BlockLinesCommands.COMMAND_UNDO + ", "
+                + BlockLinesCommands.COMMAND_REDO;
     }
 
     @Override
@@ -80,6 +90,7 @@ public class BlockLinesCommands extends CommandBase {
         commandFactory.addCommand(COMMAND_REDO, new Redo());
         commandFactory.addCommand(COMMAND_QUALITY, new Quality(eventHandler));
         commandFactory.addCommand(COMMAND_MIRROR, new MirrorCommand(eventHandler));
+        commandFactory.addCommand(COMMAND_HELP, new HelpCommand());
 
         return commandFactory;
     }

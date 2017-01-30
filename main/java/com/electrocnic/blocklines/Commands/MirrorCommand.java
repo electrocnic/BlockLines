@@ -23,10 +23,8 @@ public class MirrorCommand implements ICommand {
             Event<String> event = null;
             if(args.length<=1) {
                 event = new Event<String>(Event.MIRROR);
-                //sender.addChatMessage(new TextComponentString("Toggled mirror on or off."));
             } else if(args.length>=2) {
                 event = new Event<String>(Event.MIRROR, args[1]);
-                //sender.addChatMessage(new TextComponentString("Toggled " + (args[1].equalsIgnoreCase("h")?"horizontal":((args[1].equalsIgnoreCase("v"))?"vertical":"no")) + " mirror on or off."));
             }
 
             if(event!=null) {
@@ -45,7 +43,9 @@ public class MirrorCommand implements ICommand {
         return "- /bl mirror - Will toggle the mirror on or off. \n" +
                 "- /bl mirror h - Will toggle horizontal individual mirroring on or off.\n" +
                 "- /bl mirror v - Will toggle vertical individual mirroring on or off.\n" +
-                "- /bl mirror s - Select new mirror axis, the mirror stays activated." +
+                "- /bl mirror s - Select new mirror axis, the mirror stays activated.\n" +
+                "- /bl mirror autoreset - Toggle on or off, whether you have to set a new axis everytime you toggle the mirror\n" +
+                "on or off, or you want to keep the old axis when you activate or deactivate the mirror. " +
                 "When the mirror is on, you will be asked to select a mirror plane, a line or a point, using two blocks:\n" +
                 "First, select block a, then select block b via right-clicking blocks. If the blocks form a cube, mirroring is not possible, and thus, deactivated.";
     }

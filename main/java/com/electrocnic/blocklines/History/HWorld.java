@@ -95,6 +95,17 @@ public class HWorld {
         this.world = world;
     }
 
+    public void setBlocks(@NotNull List<BlockPos> positions,
+                          IBlockState newState,
+                          IBlockState oldState,
+                          int flags) {
+        if(world!=null) {
+            List<IDetailedBlockPos> detailedBlocks = DetailedBlockPos.convertBlocks(positions, newState); //get detailed blocks with the given state.
+            setBlocks(detailedBlocks, flags, oldState);
+        }
+    }
+
+
     /**
      * Converts the given positions to detailedBlockPos objects with the given state. Then calls setBlocks with these detailedBlockPos objects.
      * @param positions The positions for the placed blocks in the world.
@@ -107,7 +118,7 @@ public class HWorld {
                              int flags) {
         if(world!=null) {
             List<IDetailedBlockPos> detailedBlocks = DetailedBlockPos.convertBlocks(positions, newState); //get detailed blocks with the given state.
-            setBlocks(detailedBlocks, flags);
+            setBlocks(detailedBlocks, flags, null);
         }
     }
 
@@ -117,7 +128,7 @@ public class HWorld {
      * @param detailedBlocks Blocks with individual states (the states determine the blocks, the rest is the position).
      * @param flags Should be 3 most of the time.
      */
-    public void setBlocks(@NotNull List<IDetailedBlockPos> detailedBlocks, int flags) {
+    public void setBlocks(@NotNull List<IDetailedBlockPos> detailedBlocks, int flags, IBlockState oldState) {
         if(world!=null) {
             //1. convert block positions of whatever to detailedBlockPositions (outside this method and take detailedBlocks as argument, so the list can vary in states.)
             //2. mirror them and save in new list. this list contains the to-be-set blocks, not the current blocks in the world.
@@ -134,20 +145,23 @@ public class HWorld {
                     e.printStackTrace();
                 }
             }
+            if(!detailedBlocks.isEmpty()) {
 
-            List<IDetailedBlockPos> detailedUndoBlocks = DetailedBlockPos.convertDetailedBlocks(world, detailedBlocks);//DetailedBlockPos.convertBlocks(world, positions); //get detailed block positions of the current states, NOT the states after placement!!
-            //if(mirror!=null) detailedUndoBlocks = mirror.mirror(detailedUndoBlocks);
-            //detailedUndoBlocks = DetailedBlockPos.convertDetailedBlocks(world, detailedUndoBlocks); //get detailed block states of current blocks from the world. this time with the mirrored ones.
+                List<IDetailedBlockPos> detailedUndoBlocks = DetailedBlockPos.convertDetailedBlocks(world, detailedBlocks);//DetailedBlockPos.convertBlocks(world, positions); //get detailed block positions of the current states, NOT the states after placement!!
+                //if(mirror!=null) detailedUndoBlocks = mirror.mirror(detailedUndoBlocks);
+                //detailedUndoBlocks = DetailedBlockPos.convertDetailedBlocks(world, detailedUndoBlocks); //get detailed block states of current blocks from the world. this time with the mirrored ones.
 
-            Blocks history = rememberStates(detailedUndoBlocks);
-            undoHistory.push(history);
-            redoHistory = new Stack<>();
+                Blocks history = rememberStates(detailedUndoBlocks);
+                if (oldState != null) history.blocks.get(history.blocks.size() - 1).setState(oldState);
+                undoHistory.push(history);
+                redoHistory = new Stack<>();
 
 
-            for (IDetailedBlockPos block : detailedBlocks) {
-                try {
-                    world.setBlockState(block.getPos(), block.getState(), flags);
-                } catch (Exception e) {
+                for (IDetailedBlockPos block : detailedBlocks) {
+                    try {
+                        world.setBlockState(block.getPos(), block.getState(), flags);
+                    } catch (Exception e) {
+                    }
                 }
             }
         }

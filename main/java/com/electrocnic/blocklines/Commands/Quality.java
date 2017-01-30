@@ -19,9 +19,11 @@ public class Quality implements ICommand {
     private Map<String, Qualifyable> qualifyableMap = null;
 
     public Quality(ICommandEventListener eventHandler) {
-        qualifyableMap = new HashMap<String, Qualifyable>();
-        qualifyableMap.put(Ellipse.IDENTIFIER, (Ellipse)eventHandler.getTool(Ellipse.IDENTIFIER));
-        qualifyableMap.put(Circle.IDENTIFIER, (Circle)eventHandler.getTool(Circle.IDENTIFIER));
+        if(eventHandler!=null) {
+            qualifyableMap = new HashMap<String, Qualifyable>();
+            qualifyableMap.put(Ellipse.IDENTIFIER, (Ellipse) eventHandler.getTool(Ellipse.IDENTIFIER));
+            qualifyableMap.put(Circle.IDENTIFIER, (Circle) eventHandler.getTool(Circle.IDENTIFIER));
+        }
     }
 
     @Override

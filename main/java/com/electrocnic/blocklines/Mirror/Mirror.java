@@ -3,14 +3,10 @@ package com.electrocnic.blocklines.Mirror;
 import com.electrocnic.blocklines.Container.DetailedBlockPos;
 import com.electrocnic.blocklines.Container.IDetailedBlockPos;
 import com.sun.istack.internal.NotNull;
-import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.BlockStairs;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -26,6 +22,7 @@ public class Mirror implements IMirror {
     private BlockPos a = null;
     private BlockPos b = null;
     private boolean aChanged = false;
+    private boolean autoReset = true;
 
     /**
      * 0 xy
@@ -44,7 +41,6 @@ public class Mirror implements IMirror {
 
     @Override
     public List<IDetailedBlockPos> mirror(@NotNull List<IDetailedBlockPos> toBeMirrored) throws UnsupportedOperationException {
-
         if(active) {
             if(a!=null && b!=null) {
                 switch (reflectedBy()) {
@@ -93,6 +89,10 @@ public class Mirror implements IMirror {
     @Override
     public boolean toggleMirror() {
         this.active = !this.active;
+        if(!this.active && autoReset) {
+            this.a = null;
+            this.b = null;
+        }
         return this.active;
     }
 
@@ -106,6 +106,17 @@ public class Mirror implements IMirror {
     public boolean toggleHorizontalMirror() {
         this.horizontalMirror = !this.horizontalMirror;
         return this.horizontalMirror;
+    }
+
+    @Override
+    public boolean toggleAutoReset() {
+        this.autoReset = !this.autoReset;
+        return this.autoReset;
+    }
+
+    @Override
+    public boolean isAutoReset() {
+        return this.autoReset;
     }
 
     @Override
@@ -270,11 +281,11 @@ public class Mirror implements IMirror {
             switch (plane) {
                 case XYPlane:
                     newPos = new BlockPos(newPos.getX(), newPos.getY(), (2*(a.getZ()-newPos.getZ()))+newPos.getZ());
-                    newState = block.getState().withMirror(net.minecraft.util.Mirror.LEFT_RIGHT);
+                    if(horizontalMirror) newState = block.getState().withMirror(net.minecraft.util.Mirror.LEFT_RIGHT);
                     break;
                 case ZYPlane:
                     newPos = new BlockPos((2*(a.getX()-newPos.getX())+newPos.getX()), newPos.getY(), newPos.getZ());
-                    newState = block.getState().withMirror(net.minecraft.util.Mirror.FRONT_BACK);
+                    if(horizontalMirror) newState = block.getState().withMirror(net.minecraft.util.Mirror.FRONT_BACK);
                     break;
                 case XZPlane:
                     newPos = new BlockPos(newPos.getX(), (2*(a.getY()-newPos.getY())+newPos.getY()), newPos.getZ());
@@ -316,26 +327,6 @@ public class Mirror implements IMirror {
         mirrored.addAll(mirroredOnly);
         mirrored.addAll(toBeMirrored);
         return mirrored;
-    }
-
-    private EnumFacing mirrorFacing(EnumFacing before) {
-        EnumFacing facing = before;
-
-        if (facing == EnumFacing.NORTH ) {
-            facing = EnumFacing.SOUTH;
-        } else if (facing == EnumFacing.SOUTH ) {
-            facing = EnumFacing.NORTH;
-        } else if (facing == EnumFacing.WEST ) {
-            facing = EnumFacing.EAST;
-        } else if (facing == EnumFacing.EAST ) {
-            facing = EnumFacing.WEST;
-        } else if (facing == EnumFacing.DOWN ) {
-            facing = EnumFacing.UP;
-        } else if (facing == EnumFacing.UP ) {
-            facing = EnumFacing.DOWN;
-        }
-
-        return facing;
     }
 
 }

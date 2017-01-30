@@ -58,6 +58,10 @@ public interface IMirror {
 
     boolean toggleHorizontalMirror();
 
+    boolean toggleAutoReset();
+
+    boolean isAutoReset();
+
     /**
      * This method should be invoked two times.
      * The first invocation will set a, the second will set b of the mirror's axis.

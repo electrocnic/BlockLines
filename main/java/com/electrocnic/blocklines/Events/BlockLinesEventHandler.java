@@ -206,7 +206,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
             if (deStutter >= 1) deStutter = 0;
             else {
                 if (ServerProxy.getWorld() != null) {
-                    if(mirrorJustToggledOn) {
+                    if(mirrorJustToggledOn&&(mirror.isAutoReset()||mirror.isInvalid())) {
                         if(mirror != null) {
                             if(mirror.performSelection(event.getPos())) {
                                 mirrorJustToggledOn = false;
@@ -233,7 +233,13 @@ public class BlockLinesEventHandler implements ICommandEventListener {
                 }
                 deStutter++;
             }
-        }
+        }/*else if(event.getHand() == EnumHand.MAIN_HAND) {
+            if (deStutter >= 1) deStutter = 0;
+            else {
+                oldBlock = ServerProxy.getCurrentState(event.getPos());
+                deStutter++;
+            }
+        }*/
     }
 
     //TODO: remove mirrored blocks if player removes a block by hand. (only remove blocks which are placed by mirror or let player choose via option).
@@ -248,12 +254,12 @@ public class BlockLinesEventHandler implements ICommandEventListener {
             /*if (event.isCancelable()) {
                 event.setCanceled(true);
             }*/
-            //IBlockState oldState = ServerProxy.getCurrentState(pos);
+            IBlockState oldState = event.getBlockSnapshot().getReplacedBlock();
 
             //event.getPlayer().addChatMessage(new TextComponentString("Placed block at " + pos.toString()));
             List<BlockPos> singleBlockList = new ArrayList<BlockPos>();
             singleBlockList.add(pos);
-            ServerProxy.getWorld().setBlocks(singleBlockList, state, 3);
+            ServerProxy.getWorld().setBlocks(singleBlockList, state, oldState, 3);
         }
     }
 
@@ -308,7 +314,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         String args = (String) arguments;
         if(args==null || args.isEmpty() || args.equalsIgnoreCase(" ")) {
             mirrorJustToggledOn = mirror.toggleMirror();
-            return "Toggled " + (mirrorJustToggledOn?"on":"off") + " mirror." + (mirrorJustToggledOn?" Please select the mirror axis now.":"");
+            return "Toggled " + (mirrorJustToggledOn?"on":"off") + " mirror." + (mirrorJustToggledOn&&(mirror.isAutoReset()||mirror.isInvalid())?" Please select the mirror axis now.":"");
         }else if(args.equalsIgnoreCase("h")) {
             boolean on = mirror.toggleHorizontalMirror();
             return "Toggled horizontal mirror " + (on?"on.":"off.");
@@ -318,6 +324,9 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         }else if(args.equalsIgnoreCase("s")) {
             mirrorJustToggledOn = true;
             return "Please select the mirror axis now.";
+        }else if(args.equalsIgnoreCase("autoreset")) {
+            boolean on = mirror.toggleAutoReset();
+            return "Toggled auto reset axis " + (on ? "on." : "off.");
         }
         return "Error in mirrorSettings";
     }
