@@ -35,6 +35,7 @@ public class Mirror implements IMirror {
     private boolean horizontalMirror = true;
     private boolean verticalMirror = true;
     private boolean active = false;
+    private boolean odd = true;
 
     public Mirror() {
     }
@@ -117,6 +118,17 @@ public class Mirror implements IMirror {
     @Override
     public boolean isAutoReset() {
         return this.autoReset;
+    }
+
+    @Override
+    public boolean setOdd(boolean odd) {
+        this.odd = odd;
+        return this.odd;
+    }
+
+    @Override
+    public boolean isOdd() {
+        return odd;
     }
 
     @Override
@@ -280,15 +292,15 @@ public class Mirror implements IMirror {
 
             switch (plane) {
                 case XYPlane:
-                    newPos = new BlockPos(newPos.getX(), newPos.getY(), (2*(a.getZ()-newPos.getZ()))+newPos.getZ());
+                    newPos = new BlockPos(newPos.getX(), newPos.getY(), (2*(a.getZ()-newPos.getZ() + (odd?0:0.5)) )+newPos.getZ());
                     if(horizontalMirror) newState = block.getState().withMirror(net.minecraft.util.Mirror.LEFT_RIGHT);
                     break;
                 case ZYPlane:
-                    newPos = new BlockPos((2*(a.getX()-newPos.getX())+newPos.getX()), newPos.getY(), newPos.getZ());
+                    newPos = new BlockPos((2*(a.getX()-newPos.getX() + (odd?0:0.5))+newPos.getX()), newPos.getY(), newPos.getZ());
                     if(horizontalMirror) newState = block.getState().withMirror(net.minecraft.util.Mirror.FRONT_BACK);
                     break;
                 case XZPlane:
-                    newPos = new BlockPos(newPos.getX(), (2*(a.getY()-newPos.getY())+newPos.getY()), newPos.getZ());
+                    newPos = new BlockPos(newPos.getX(), (2*(a.getY()-newPos.getY() + (odd?0:0.5))+newPos.getY()), newPos.getZ());
                     if(verticalMirror) {
                         Comparable propStairs = newState.getProperties().get(TOP_BOTTOM_STAIRS);
                         Comparable propSlabs = newState.getProperties().get(TOP_BOTTOM_SLABS);

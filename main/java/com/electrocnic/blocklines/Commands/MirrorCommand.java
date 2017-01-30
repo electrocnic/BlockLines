@@ -45,7 +45,9 @@ public class MirrorCommand implements ICommand {
                 "- /bl mirror v - Will toggle vertical individual mirroring on or off.\n" +
                 "- /bl mirror s - Select new mirror axis, the mirror stays activated.\n" +
                 "- /bl mirror autoreset - Toggle on or off, whether you have to set a new axis everytime you toggle the mirror\n" +
-                "on or off, or you want to keep the old axis when you activate or deactivate the mirror. " +
+                "on or off, or you want to keep the old axis when you activate or deactivate the mirror.\n" +
+                "- /bl mirror odd|even - Choose, whether the axis lies directly on the blocks (which means there is a line of blocks\n" +
+                "which represent the axis) (=odd), or the axis should be between two blocks (=even).\n" +
                 "When the mirror is on, you will be asked to select a mirror plane, a line or a point, using two blocks:\n" +
                 "First, select block a, then select block b via right-clicking blocks. If the blocks form a cube, mirroring is not possible, and thus, deactivated.";
     }

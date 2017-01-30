@@ -63,6 +63,17 @@ public interface IMirror {
     boolean isAutoReset();
 
     /**
+     * Sets the axis to odd.
+     * @return True, when odd.
+     */
+    boolean setOdd(boolean odd);
+
+    /**
+     * @return True, if axis is odd, false: even.
+     */
+    boolean isOdd();
+
+    /**
      * This method should be invoked two times.
      * The first invocation will set a, the second will set b of the mirror's axis.
      * @param pos The position of the block in the world.

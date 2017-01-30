@@ -177,6 +177,12 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         }else if(args.equalsIgnoreCase("autoreset")) {
             boolean on = mirror.toggleAutoReset();
             return "Toggled auto reset axis " + (on ? "on." : "off.");
+        }else if(args.equalsIgnoreCase("odd")) {
+            boolean odd = mirror.setOdd(true);
+            return "Axis set to " + (odd?"odd":"even");
+        }else if(args.equalsIgnoreCase("even")) {
+            boolean odd = mirror.setOdd(false);
+            return "Axis set to " + (odd?"odd":"even");
         }
         return "Error in mirrorSettings";
     }
