@@ -3,7 +3,10 @@ package com.electrocnic.blocklines.Events;
 import com.electrocnic.blocklines.EditTools.*;
 import com.electrocnic.blocklines.Mirror.IMirror;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +35,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
     private short deStutter = 0;
     private String currentMode = Line.IDENTIFIER;
 
+    private boolean buildingToolActive = false;
 
     public BlockLinesEventHandler() {
         tools = new HashMap<String, Tool>();
@@ -39,6 +43,8 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         eventMethods.put(Event.MODE, this::setMode);
         eventMethods.put(Event.ABORT, this::resetSelection);
         eventMethods.put(Event.MIRROR, this::mirrorSettings);
+        eventMethods.put(Event.ACTIVATE, this::activate);
+        eventMethods.put(Event.DEACTIVATE, this::deactivate);
         //TODO: add methods if needed
     }
 
@@ -61,6 +67,10 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         this.mirror = mirror;
     }
 
+    /**
+     * Performs selection for mirror or building tools.
+     * @param event
+     */
     @SubscribeEvent
     public void onClick(PlayerInteractEvent event) {
         //1. destutter.
@@ -75,24 +85,24 @@ public class BlockLinesEventHandler implements ICommandEventListener {
                         if(mirror != null) {
                             if(mirror.performSelection(event.getPos())) {
                                 mirrorJustToggledOn = false;
-                                event.getEntityPlayer().addChatMessage(new TextComponentString("Mirror Axis selected: Mirror by " + mirror.getAxisName()));
+                                event.getEntityPlayer().sendMessage(new TextComponentString("Mirror Axis selected: Mirror by " + mirror.getAxisName()));
                                 if(mirror.isInvalid()) {
-                                    event.getEntityPlayer().addChatMessage(new TextComponentString("Error: Axis cannot form a cube. You must either select a point (a=b), a line or a plane.\n" +
+                                    event.getEntityPlayer().sendMessage(new TextComponentString("Error: Axis cannot form a cube. You must either select a point (a=b), a line or a plane.\n" +
                                             "The mirror has been deactivated. Activate again to select a new axis."));
                                     mirror.activateMirror(false);
                                 }
                             }else{
-                                event.getEntityPlayer().addChatMessage(new TextComponentString("First mirror Axis point selected..."));
+                                event.getEntityPlayer().sendMessage(new TextComponentString("First mirror Axis point selected..."));
                             }
                         }else {
-                            event.getEntityPlayer().addChatMessage(new TextComponentString("Fatal error during selection for the mirror in BlockLinesEventHandler occurred."));
+                            event.getEntityPlayer().sendMessage(new TextComponentString("Fatal error during selection for the mirror in BlockLinesEventHandler occurred."));
                         }
-                    }else {
+                    }else if(buildingToolActive){
                         ISelectable tool = tools.get(currentMode);
                         if (tool != null) {
                             tool.performSelection(event.getPos(), event.getEntityPlayer());
                         } else {
-                            event.getEntityPlayer().addChatMessage(new TextComponentString("Fatal error during selection in BlockLinesEventHandler occurred."));
+                            event.getEntityPlayer().sendMessage(new TextComponentString("Fatal error during selection in BlockLinesEventHandler occurred."));
                         }
                     }
                 }
@@ -101,6 +111,10 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         }
     }
 
+    /**
+     * Mirrors block when player placed block by hand.
+     * @param event
+     */
     @SubscribeEvent
     public void onBlockPlaceEvent(BlockEvent.PlaceEvent event) {
         if(mirror.isActive() && !mirror.isInvalid()) {
@@ -112,6 +126,24 @@ public class BlockLinesEventHandler implements ICommandEventListener {
             ServerProxy.getWorld().setBlocks(singleBlockList, state, oldState, 3);
         }
     }
+
+    /**
+     * Removes blocks when mirror is active and player destroys a block by hand.
+     * @param event
+     */
+    @SubscribeEvent
+    public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
+        if(mirror.isActive() && !mirror.isInvalid() && mirror.isAutoRemove()) {
+            BlockPos pos = event.getPos();
+            IBlockState state = Blocks.AIR.getDefaultState();
+            IBlockState oldState = event.getState();
+
+            List<BlockPos> singleBlockList = new ArrayList<BlockPos>();
+            singleBlockList.add(pos);
+            ServerProxy.getWorld().setBlocks(singleBlockList, state, oldState, 3);
+        }
+    }
+
 
     /**
      * Whenever an command has been made by the player which affects properties of the eventHandler directly (for
@@ -128,7 +160,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         if(method!=null) {
             return method.adoptSettings(event.getDescription());
         }
-        return "Error in onCommandEvent.";
+        return "Unknown command.";
     }
 
     /**
@@ -137,12 +169,12 @@ public class BlockLinesEventHandler implements ICommandEventListener {
      */
     private String setMode(Object mode) {
         String castedMode = (String) mode;
-        if(castedMode != null) {
+        if(castedMode != null && tools.containsKey(castedMode)) {
             this.currentMode = castedMode;
             resetSelection(null);
             return "Selection reset. Mode set to " + castedMode;
         }
-        return "Error in setMode.";
+        return "Unknown command.";
     }
 
     /**
@@ -183,8 +215,21 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         }else if(args.equalsIgnoreCase("even")) {
             boolean odd = mirror.setOdd(false);
             return "Axis set to " + (odd?"odd":"even");
+        }else if(args.equalsIgnoreCase("autoremove")) {
+            boolean on = mirror.toggleAutoRemove();
+            return "Auto-remove blocks when destroyed by hand toggled " + (on ? "on." : "off.");
         }
-        return "Error in mirrorSettings";
+        return "Unknown command.";
+    }
+
+    private String activate(Object arguments) {
+        this.buildingToolActive = true;
+        return "BlockLines enabled. Right clicking will now select and draw forms.";
+    }
+
+    private String deactivate(Object arguments) {
+        this.buildingToolActive = false;
+        return "BlockLines disabled. Mirror has to be disabled separately if still enabled unless needed!";
     }
 
     public static BlockLinesEventHandler create() {

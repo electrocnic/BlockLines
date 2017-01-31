@@ -16,7 +16,7 @@ public class Redo implements ICommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        sender.addChatMessage(new TextComponentString(ServerProxy.getWorld().redo()));
+        sender.sendMessage(new TextComponentString(ServerProxy.getWorld().redo()));
     }
 
     @Override

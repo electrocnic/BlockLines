@@ -8,6 +8,8 @@ public class Event<T> {
     public static final String MODE = "mode";
     public static final String ABORT = "abort";
     public static final String MIRROR = "mirror";
+    public static final String ACTIVATE = "activate";
+    public static final String DEACTIVATE = "deactivate";
 
     private String key = null;
     private T description = null;

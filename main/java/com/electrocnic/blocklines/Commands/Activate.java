@@ -7,29 +7,25 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 
 /**
- * Created by Andreas on 31.10.2016.
+ * Created by Andreas on 31.01.2017.
  */
-public class Abort implements ICommand {
+public class Activate implements ICommand {
 
     private ICommandEventListener eventHandler = null;
 
-    public Abort(ICommandEventListener eventHandler) {
+    public Activate(ICommandEventListener eventHandler) {
         this.eventHandler = eventHandler;
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        if(eventHandler!=null) {
-            Event<String> event = new Event<>(Event.ABORT);
-            String result = eventHandler.onCommandEvent(event);
-            sender.sendMessage(new TextComponentString(result));
-        }else {
-            sender.sendMessage(new TextComponentString("EventHandler not yet initialized."));
-        }
+        String result = eventHandler.onCommandEvent(new Event<String>(Event.ACTIVATE));
+        sender.sendMessage(new TextComponentString(result));
     }
 
     @Override
     public String toString() {
-        return "- /bl abort - Will reset the current selection of blocks for the drawing.";
+        return "- /bl activate - Will enable the usage of the building-tools (line, circle, cube, etc.). Will not affect the mirror.\n" +
+                "Mirror will also duplicate blocks which are generated with these tools however, if the mirror is activated.";
     }
 }

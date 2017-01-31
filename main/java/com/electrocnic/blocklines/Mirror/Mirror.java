@@ -1,8 +1,8 @@
 package com.electrocnic.blocklines.Mirror;
 
+import com.electrocnic.blocklines.Annotations.NotNull;
 import com.electrocnic.blocklines.Container.DetailedBlockPos;
 import com.electrocnic.blocklines.Container.IDetailedBlockPos;
-import com.sun.istack.internal.NotNull;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.properties.PropertyEnum;
@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Created by Andreas on 24.11.2016.
- *
+ * TODO: implement removal of blocks on destroy. it's necessary.
  */
 public class Mirror implements IMirror {
 
@@ -22,7 +22,8 @@ public class Mirror implements IMirror {
     private BlockPos a = null;
     private BlockPos b = null;
     private boolean aChanged = false;
-    private boolean autoReset = true;
+    private boolean autoReset = false;
+    private boolean autoRemove = true;
 
     /**
      * 0 xy
@@ -121,6 +122,17 @@ public class Mirror implements IMirror {
     }
 
     @Override
+    public boolean toggleAutoRemove() {
+        this.autoRemove = !this.autoRemove;
+        return autoRemove;
+    }
+
+    @Override
+    public boolean isAutoRemove() {
+        return autoRemove;
+    }
+
+    @Override
     public boolean setOdd(boolean odd) {
         this.odd = odd;
         return this.odd;
@@ -164,7 +176,7 @@ public class Mirror implements IMirror {
     /**
      * Y is the minecraft-Y, namely the normal Z. xz means xy and vice versa.
      */
-    enum Reflection {
+    private enum Reflection {
         XZPlane, //y(a) == y(b)
         XYPlane, //z(a) == z(b)
         ZYPlane, //x(a) == x(b)

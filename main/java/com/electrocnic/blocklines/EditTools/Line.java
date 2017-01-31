@@ -59,7 +59,7 @@ public class Line extends Tool {
         }else if(secondRow) {
             selection2.add(pos);
         }
-        player.addChatMessage(new TextComponentString("Block has been added to your " + (inARow ?(secondRow ?"second ":"first "):"") + "selection. Selected: " + (secondRow ?selection2:selection).size()));
+        player.sendMessage(new TextComponentString("Block has been added to your " + (inARow ?(secondRow ?"second ":"first "):"") + "selection. Selected: " + (secondRow ?selection2:selection).size()));
         if((!inARow && selection.size() == getSelectionCount()) || (inARow && secondRow && selection2.size() >= selection.size())) {
             if(!inARow) {
                 draw(player, selection, ServerProxy.getWorld().getBlockState(selection.get(0)));

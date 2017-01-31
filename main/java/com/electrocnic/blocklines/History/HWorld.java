@@ -1,9 +1,9 @@
 package com.electrocnic.blocklines.History;
 
+import com.electrocnic.blocklines.Annotations.NotNull;
 import com.electrocnic.blocklines.Container.DetailedBlockPos;
 import com.electrocnic.blocklines.Container.IDetailedBlockPos;
 import com.electrocnic.blocklines.Mirror.IMirror;
-import com.sun.istack.internal.NotNull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

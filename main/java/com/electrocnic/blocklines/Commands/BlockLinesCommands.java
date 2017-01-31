@@ -1,8 +1,10 @@
 package com.electrocnic.blocklines.Commands;
 
 import com.electrocnic.blocklines.Commands.Modes.ChangeMode;
+import com.electrocnic.blocklines.Commands.Modes.Deactivate;
 import com.electrocnic.blocklines.Commands.Modes.SubcommandWrapper;
 import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
+import com.electrocnic.blocklines.Events.Event;
 import com.electrocnic.blocklines.Events.ICommandEventListener;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -28,6 +30,8 @@ public class BlockLinesCommands extends CommandBase {
     public static final String COMMAND_REDO = "redo";
     public static final String COMMAND_QUALITY = "quality";
     public static final String COMMAND_MIRROR = "mirror";
+    public static final String COMMAND_ACTIVATE = "activate";
+    public static final String COMMAND_DEACTIVATE = "deactivate";
     public static final String COMMAND_HELP = "help";
 
     private ICommandEventListener eventHandler = null;
@@ -49,6 +53,8 @@ public class BlockLinesCommands extends CommandBase {
 
     public static String getAvailableCommands() {
         return "" + BlockLinesCommands.COMMAND_ABORT + ", "
+                + BlockLinesCommands.COMMAND_ACTIVATE + ", "
+                + BlockLinesCommands.COMMAND_DEACTIVATE + ", "
                 + BlockLinesCommands.COMMAND_QUALITY + ", "
                 + BlockLinesCommands.COMMAND_MODE + ", "
                 + BlockLinesCommands.COMMAND_MIRROR + ", "
@@ -57,12 +63,13 @@ public class BlockLinesCommands extends CommandBase {
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "bl";
     }
 
+
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         if(commands==null) commands = new HashMap<String, ICommand>();
         return commands.entrySet().stream().map(Entry::toString).collect(Collectors.joining("\n"));
     }
@@ -71,13 +78,13 @@ public class BlockLinesCommands extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length <= 0)
         {
-            sender.addChatMessage(new TextComponentString(getCommandUsage(sender)));
+            sender.sendMessage(new TextComponentString(getUsage(sender)));
             return;
         }
         try {
             commands.get(args[0]).execute(server, sender, args);
         }catch (Exception e) {
-            sender.addChatMessage(new TextComponentString("This command does not exist. Maybe you forgot something? Mis-spelled?"));
+            sender.sendMessage(new TextComponentString("This command does not exist. Maybe you forgot something? Mis-spelled?"));
         }
     }
 
@@ -91,20 +98,22 @@ public class BlockLinesCommands extends CommandBase {
         commandFactory.addCommand(COMMAND_QUALITY, new Quality(eventHandler));
         commandFactory.addCommand(COMMAND_MIRROR, new MirrorCommand(eventHandler));
         commandFactory.addCommand(COMMAND_HELP, commandFactory::printHelpText);
+        commandFactory.addCommand(COMMAND_ACTIVATE, new Activate(eventHandler));
+        commandFactory.addCommand(COMMAND_DEACTIVATE, new Deactivate(eventHandler));
 
         return commandFactory;
     }
 
     private void printHelpText(MinecraftServer server, ICommandSender sender, String[] args) {
         if(args==null || args.length<=1) {
-            sender.addChatMessage(new TextComponentString("Usage: /bl help command\n" +
+            sender.sendMessage(new TextComponentString("Usage: /bl help command\n" +
                     "Available commands: "
                     + BlockLinesCommands.getAvailableCommands()));
         }else if(commands.get(args[1]) == null) {
-            sender.addChatMessage(new TextComponentString("Command unknown. Available Commands:\n"
+            sender.sendMessage(new TextComponentString("Command unknown. Available Commands:\n"
                     + BlockLinesCommands.getAvailableCommands()));
         } else {
-            sender.addChatMessage(new TextComponentString("Usage:\n" +
+            sender.sendMessage(new TextComponentString("Usage:\n" +
                     "\n" +
                     commands.get(args[1])));
         }

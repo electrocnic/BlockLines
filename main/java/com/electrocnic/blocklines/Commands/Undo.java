@@ -17,7 +17,8 @@ public class Undo implements ICommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        sender.addChatMessage(new TextComponentString(ServerProxy.getWorld().undo()));
+        sender.sendMessage(new TextComponentString(ServerProxy.getWorld().undo()));
+
     }
 
     @Override

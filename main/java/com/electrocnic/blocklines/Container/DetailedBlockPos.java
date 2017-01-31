@@ -1,7 +1,8 @@
 package com.electrocnic.blocklines.Container;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+
+import com.electrocnic.blocklines.Annotations.NotNull;
+import com.electrocnic.blocklines.Annotations.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

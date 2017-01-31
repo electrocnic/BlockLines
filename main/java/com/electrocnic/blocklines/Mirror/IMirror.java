@@ -1,7 +1,7 @@
 package com.electrocnic.blocklines.Mirror;
 
+import com.electrocnic.blocklines.Annotations.NotNull;
 import com.electrocnic.blocklines.Container.IDetailedBlockPos;
-import com.sun.istack.internal.NotNull;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -61,6 +61,10 @@ public interface IMirror {
     boolean toggleAutoReset();
 
     boolean isAutoReset();
+
+    boolean toggleAutoRemove();
+
+    boolean isAutoRemove();
 
     /**
      * Sets the axis to odd.

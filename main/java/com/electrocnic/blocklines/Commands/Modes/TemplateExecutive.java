@@ -41,13 +41,13 @@ public abstract class TemplateExecutive extends SubCommandSandbox {
      */
     @Override
     public final void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        sender.addChatMessage(new TextComponentString( useModeImpl() ));
+        sender.sendMessage(new TextComponentString( useModeImpl() ));
         if(args.length >=3) {
             IFeedbackMethod method = subcommands.get(args[2]);
             if(method!=null) {
-                sender.addChatMessage(new TextComponentString( method.execute() ));
+                sender.sendMessage(new TextComponentString( method.execute() ));
             } else {
-                sender.addChatMessage(new TextComponentString( useOtherImpl(args) ));
+                sender.sendMessage(new TextComponentString( useOtherImpl(args) ));
             }
         }
     }

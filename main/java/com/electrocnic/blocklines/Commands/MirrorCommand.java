@@ -29,12 +29,12 @@ public class MirrorCommand implements ICommand {
 
             if(event!=null) {
                 String result = eventHandler.onCommandEvent(event);
-                sender.addChatMessage(new TextComponentString(result));
+                sender.sendMessage(new TextComponentString(result));
             }else {
-                sender.addChatMessage(new TextComponentString("Should never happen (execute in MirrorCommand.java)"));
+                sender.sendMessage(new TextComponentString("Should never happen (execute in MirrorCommand.java)"));
             }
         }else {
-            sender.addChatMessage(new TextComponentString("EventHandler not yet initialized."));
+            sender.sendMessage(new TextComponentString("EventHandler not yet initialized."));
         }
     }
 
@@ -48,6 +48,7 @@ public class MirrorCommand implements ICommand {
                 "on or off, or you want to keep the old axis when you activate or deactivate the mirror.\n" +
                 "- /bl mirror odd|even - Choose, whether the axis lies directly on the blocks (which means there is a line of blocks\n" +
                 "which represent the axis) (=odd), or the axis should be between two blocks (=even).\n" +
+                "- /bl mirror autoremove - Choose, whether the mirrored blocks should be automatically destroyed, when you destroy blocks by hand.\n" +
                 "When the mirror is on, you will be asked to select a mirror plane, a line or a point, using two blocks:\n" +
                 "First, select block a, then select block b via right-clicking blocks. If the blocks form a cube, mirroring is not possible, and thus, deactivated.";
     }
