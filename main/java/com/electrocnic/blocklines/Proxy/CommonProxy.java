@@ -1,18 +1,13 @@
 package com.electrocnic.blocklines.Proxy;
 
 import com.electrocnic.blocklines.Events.BlockLinesEventHandler;
-import com.mojang.authlib.GameProfile;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
+import com.electrocnic.blocklines.Events.ICommandEventListener;
+import com.electrocnic.blocklines.Mirror.IMirror;
+import com.electrocnic.blocklines.Mirror.Mirror;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-
-import java.util.UUID;
 
 /**
  * Created by Andreas on 29.10.2016.
@@ -20,13 +15,11 @@ import java.util.UUID;
 public class CommonProxy {
 
 
-
     public void preInit(FMLPreInitializationEvent e) {
-
     }
 
-    public void init(FMLInitializationEvent e) {
-        MinecraftForge.EVENT_BUS.register(new BlockLinesEventHandler());
+    public void init(FMLInitializationEvent e, ICommandEventListener eventHandler) {
+        MinecraftForge.EVENT_BUS.register(eventHandler);
     }
 
     public void postInit(FMLPostInitializationEvent e) {

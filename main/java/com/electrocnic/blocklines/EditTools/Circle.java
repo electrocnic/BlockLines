@@ -1,47 +1,42 @@
 package com.electrocnic.blocklines.EditTools;
 
-import akka.japi.pf.FI;
-import com.electrocnic.blocklines.BlockLines;
 import com.electrocnic.blocklines.History.HWorld;
 import com.electrocnic.blocklines.Proxy.ServerProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.World;
 
 import java.util.*;
 
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Circle extends Tool implements Drawable, Qualifyable{
+public class Circle extends Tool implements Qualifyable {
 
     public static final String IDENTIFIER = "circle";
 
-    private static int mode = 0;
+    private int mode = 0;
     private int quality = Qualifyable.DEFAULT_QUALITY;
     private Map<Integer, Filter> filter = null;
     private boolean autoQuality = true;
-    private static boolean thick = false;
-    private static boolean setMid = false;
 
+    /** A FULL circle, NOT a filled circle */
     public static final int MODE_FULL = 0;
-    public static final int MODE_FULL_FILL = MODE_FULL+1;
-    public static final int MODE_SEGMENT_IN = MODE_FULL_FILL+1;
+    //public static final int MODE_FULL_FILL = MODE_FULL+1;
+    public static final int MODE_SEGMENT_IN = MODE_FULL+1;
     public static final int MODE_SEGMENT_OUT = MODE_SEGMENT_IN+1;
     public static final int MODE_ONE_SEGMENT = MODE_SEGMENT_OUT+1;
     //public static final int MODE_THICK = MODE_ONE_SEGMENT+1;
     public static final int MODES = MODE_ONE_SEGMENT+1;
 
     public Circle() {
+        super(3);
         quality = Qualifyable.DEFAULT_QUALITY;
         filter = new HashMap<Integer, Filter>();
         filter.put(MODE_FULL, new FilterMode0());
-        filter.put(MODE_FULL_FILL, new FilterMode1());
+        //filter.put(MODE_FULL_FILL, new FilterMode1());
         filter.put(MODE_SEGMENT_IN, new FilterMode2());
         filter.put(MODE_SEGMENT_OUT, new FilterMode3());
         filter.put(MODE_ONE_SEGMENT, new FilterMode4());
@@ -49,7 +44,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
         autoQuality = true;
     }
 
-    @Override
+
     public void draw(EntityPlayer player, List<BlockPos> selection, IBlockState blockType) {
         boolean err = false;
 
@@ -57,7 +52,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
 
         if(!err) {
             ITextComponent message = new TextComponentString("Selection for Circle: " + selection.size());
-            player.addChatMessage(message);
+            player.sendMessage(message);
 
             // K(xyz) = M(xyz) + cos(winkel)*u(xyz) + sin(winkel)*v(xyz);
             double a1 = 0, a2 = 0, a3 = 0;
@@ -85,14 +80,14 @@ public class Circle extends Tool implements Drawable, Qualifyable{
             c3 = selection.get(2).getY();
 
             message = new TextComponentString("a1 = " + a1 + "; a2 = " + a2 + "; a3 = " + a3);
-            player.addChatMessage(message);
+            player.sendMessage(message);
             //player.sendMessage( "a1 = " + a1 + "; a2 = " + a2 + "; a3 = " + a3 );
             //player.sendMessage( "b1 = " + b1 + "; b2 = " + b2 + "; b3 = " + b3 );
             message = new TextComponentString("b1 = " + b1 + "; b2 = " + b2 + "; b3 = " + b3);
-            player.addChatMessage(message);
+            player.sendMessage(message);
             //player.sendMessage( "c1 = " + c1 + "; c2 = " + c2 + "; c3 = " + c3 );
             message = new TextComponentString("c1 = " + c1 + "; c2 = " + c2 + "; c3 = " + c3);
-            player.addChatMessage(message);
+            player.sendMessage(message);
 
             k = loadCoefficients(a1, a2, a3, b1, b2, b3, c1, c2, c3);
             n1 = k[75];
@@ -112,7 +107,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
             } else if (k[49] != 0) {
                 M[0] = k[50] / k[49];
             } else {
-                player.addChatMessage(new TextComponentString("The three points form a straight line. - x"));
+                player.sendMessage(new TextComponentString("The three points form a straight line. - x"));
                 err=true;
             }
 
@@ -129,7 +124,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
             } else if (k[73] != 0) {
                 M[1] = k[74] / k[73];
             } else {
-                player.addChatMessage(new TextComponentString("The three points form a straight line. - y"));
+                player.sendMessage(new TextComponentString("The three points form a straight line. - y"));
                 err=true;
             }
 
@@ -146,13 +141,13 @@ public class Circle extends Tool implements Drawable, Qualifyable{
             } else if (k[61] != 0) {
                 M[2] = k[62] / k[61];
             } else {
-                player.addChatMessage(new TextComponentString("The three points form a straight line. - z"));
+                player.sendMessage(new TextComponentString("The three points form a straight line. - z"));
                 err=true;
             }
 
             if(!err) {
 
-                player.addChatMessage(new TextComponentString("M(" + Math.round(M[0]) + "/" + Math.round(M[2]) + "/" + Math.round(M[1]) + ")"));
+                player.sendMessage(new TextComponentString("M(" + Math.round(M[0]) + "/" + Math.round(M[2]) + "/" + Math.round(M[1]) + ")"));
 
                 //w.getBlockAt((int) Math.round(M[0]), (int) Math.round(M[1]), (int) Math.round(M[2])).setType(Material.EMERALD_BLOCK);
                 if(ServerProxy.getWorld()!=null) {
@@ -179,15 +174,15 @@ public class Circle extends Tool implements Drawable, Qualifyable{
                     double phi = 0;
 
                     double radius = Math.sqrt(Math.pow((a1-M[0]),2)+ Math.pow((a2-M[2]),2)+Math.pow((a3-M[1]),2));
-                    player.addChatMessage(new TextComponentString("Radius: " + radius));
+                    player.sendMessage(new TextComponentString("Radius: " + radius));
                     double umfang = 2 * Math.PI * radius;
-                    player.addChatMessage(new TextComponentString("Umfang: " + umfang));
+                    player.sendMessage(new TextComponentString("Umfang: " + umfang));
 
                     if(autoQuality) quality = (int)(Math.pow(umfang,2));
-                    player.addChatMessage(new TextComponentString("Quality: " + quality));
+                    player.sendMessage(new TextComponentString("Quality: " + quality));
 
                     double dphi = umfang/quality;
-                    player.addChatMessage(new TextComponentString("dphi: " + dphi));
+                    player.sendMessage(new TextComponentString("dphi: " + dphi));
 
                     List<BlockPos> seg1 = new ArrayList<BlockPos>();
                     List<BlockPos> seg2 = new ArrayList<BlockPos>();
@@ -207,7 +202,7 @@ public class Circle extends Tool implements Drawable, Qualifyable{
                     short segmentation=0;
                     double fillfactor = 1;
                     double filldecrement = 1/(2.3*radius+1);
-                    if(mode==MODE_FULL_FILL)  player.addChatMessage(new TextComponentString("filldecrement: " + filldecrement));
+                    if(fill)  player.sendMessage(new TextComponentString("filldecrement: " + filldecrement));
                     boolean secondRound=false;
 
                     do {
@@ -318,12 +313,12 @@ public class Circle extends Tool implements Drawable, Qualifyable{
                         fillfactor -= filldecrement;
                         phi=0;
                         secondRound=true;
-                    }while (Circle.getMode()==MODE_FULL_FILL && fillfactor>0.001);
+                    }while (fill && fillfactor>0.001);
 
                     int tempKey = ((stack.peek()+1)%3)+1; //maps values from 1,0,2 to 3,2,1
                     currentSegment.get(tempKey).addAll(temp);
 
-                    if(setMid) {
+                    if(super.mid) {
                         //world.setBlockState(midPos,  Blocks.DIAMOND_BLOCK.getDefaultState(), 3);
                         currentSegment.get(4).add(midPos);
                     }
@@ -334,17 +329,22 @@ public class Circle extends Tool implements Drawable, Qualifyable{
     }
 
 
+    @Override
+    public void performSelection(BlockPos pos, EntityPlayer player) {
+        super.performSelection(pos, player);
+    }
+
+    @Override
+    public void resetSelection() {
+        super.resetSelection();
+    }
+
 
     private boolean isAroundSelection(BlockPos block, BlockPos selection) {
         return (block.equals(selection) ||
                 (Math.abs(block.getX()-selection.getX()) <= 1 &&
                 Math.abs(block.getY()-selection.getY()) <= 1 &&
                 Math.abs(block.getZ()-selection.getZ()) <= 1 ));
-    }
-
-    @Override
-    public int getSelectionCount() {
-        return 3;
     }
 
     private double[] loadV( 	double ox, double oy, double oz,
@@ -515,36 +515,19 @@ public class Circle extends Tool implements Drawable, Qualifyable{
         this.autoQuality = autoset;
     }
 
-    public static int setMode(int mode) {
-        if( mode>=MODE_FULL && mode<=MODES ) {
-            Circle.mode = mode;
+    @Override
+    public int setSubMode(int mode) {
+        if( mode>=MODE_FULL && mode<MODES ) {
+            this.mode = mode;
             return mode;
-        }else return Circle.mode;
+        }else return this.mode;
     }
 
-    public static int getMode() {
+    @Override
+    public int getSubMode() {
         return mode;
     }
 
-    public static void setMid(boolean mid) {
-        setMid = mid;
-    }
-
-    public static void toggleMid() {
-        setMid = !setMid;
-    }
-
-    public static boolean getMid() {
-        return setMid;
-    }
-
-    public static void setThick(boolean thick) {
-        Circle.thick = thick;
-    }
-
-    public static boolean getThick() {
-        return Circle.thick;
-    }
 }
 
 interface Filter {
@@ -555,32 +538,6 @@ interface Filter {
  * Full circle (not filled)
  */
 class FilterMode0 implements Filter {
-    @Override
-    public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
-        /*Runnable placeBlock = () -> { for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
-            for(BlockPos block : segment.getValue()) {
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                world.setBlockState(block, /*Blocks.EMERALD_BLOCK.getDefaultState()*blockType, 3);
-            }
-        } };
-        Thread thread = new Thread(placeBlock);
-        thread.start();*/
-        List<BlockPos> segmentsSum = new ArrayList<>();
-        for(Map.Entry<Integer, List<BlockPos>> segment : segments.entrySet()) {
-            segmentsSum.addAll(segment.getValue());
-        }
-        world.setBlocks(segmentsSum, blockType, 3);
-    }
-}
-
-/**
- * Full circle, filled
- */
-class FilterMode1 implements Filter {
     @Override
     public void paintSegments(EntityPlayer player, HWorld world, Map<Integer, List<BlockPos>> segments, IBlockState blockType) {
         List<BlockPos> segmentsSum = new ArrayList<>();

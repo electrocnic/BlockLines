@@ -9,28 +9,34 @@ import java.util.List;
 /**
  * Created by Andreas on 31.10.2016.
  */
-public class Ellipse extends Tool implements Drawable, Qualifyable {
+public class Ellipse extends Tool implements Qualifyable {
 
     public static final String IDENTIFIER = "ellipse";
 
-    private static int mode = 0;
+    private int mode = 0;
     private int quality = Qualifyable.DEFAULT_QUALITY;
     private boolean autoQuality = true;
 
     public Ellipse() {
+        super(3); //TODO change selectionCount if more or less.
         quality = Qualifyable.DEFAULT_QUALITY;
         autoQuality = true;
     }
 
-    @Override
     public void draw(EntityPlayer player, List<BlockPos> selection, IBlockState blockType) {
 
     }
 
     @Override
-    public int getSelectionCount() {
-        return 3; //TODO: change if only 2 are needed.
+    public void performSelection(BlockPos pos, EntityPlayer player) {
+        super.performSelection(pos, player);
     }
+
+    @Override
+    public void resetSelection() {
+        super.resetSelection();
+    }
+
 
     @Override
     public void setQuality(int quality) {
@@ -42,13 +48,17 @@ public class Ellipse extends Tool implements Drawable, Qualifyable {
         this.autoQuality = autoset;
     }
 
-    public static void setMode(int mode) {
-        if( mode>=0 && mode<=3 ) {
-            Ellipse.mode = mode;
+    @Override
+    public int setSubMode(int mode) {
+        if( mode>=0 && mode<=3 ) { //TODO: change to static fields.
+            this.mode = mode;
         }
+        return this.mode;
     }
 
-    public static int getMode() {
+    @Override
+    public int getSubMode() {
         return mode;
     }
+
 }
