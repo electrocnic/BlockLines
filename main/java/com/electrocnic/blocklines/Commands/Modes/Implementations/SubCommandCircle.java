@@ -17,8 +17,7 @@ public class SubCommandCircle extends TemplateExecutive {
 
     @Override
     protected String useModeImpl() {
-        super.setMode(Circle.IDENTIFIER);
-        return "Mode set to Circle.";
+        return super.setMode(Circle.IDENTIFIER);
     }
 
     @Override

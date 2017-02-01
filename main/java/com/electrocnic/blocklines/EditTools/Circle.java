@@ -52,7 +52,7 @@ public class Circle extends Tool implements Qualifyable {
 
         if(!err) {
             ITextComponent message = new TextComponentString("Selection for Circle: " + selection.size());
-            player.addChatMessage(message);
+            player.sendMessage(message);
 
             // K(xyz) = M(xyz) + cos(winkel)*u(xyz) + sin(winkel)*v(xyz);
             double a1 = 0, a2 = 0, a3 = 0;
@@ -80,14 +80,14 @@ public class Circle extends Tool implements Qualifyable {
             c3 = selection.get(2).getY();
 
             message = new TextComponentString("a1 = " + a1 + "; a2 = " + a2 + "; a3 = " + a3);
-            player.addChatMessage(message);
+            player.sendMessage(message);
             //player.sendMessage( "a1 = " + a1 + "; a2 = " + a2 + "; a3 = " + a3 );
             //player.sendMessage( "b1 = " + b1 + "; b2 = " + b2 + "; b3 = " + b3 );
             message = new TextComponentString("b1 = " + b1 + "; b2 = " + b2 + "; b3 = " + b3);
-            player.addChatMessage(message);
+            player.sendMessage(message);
             //player.sendMessage( "c1 = " + c1 + "; c2 = " + c2 + "; c3 = " + c3 );
             message = new TextComponentString("c1 = " + c1 + "; c2 = " + c2 + "; c3 = " + c3);
-            player.addChatMessage(message);
+            player.sendMessage(message);
 
             k = loadCoefficients(a1, a2, a3, b1, b2, b3, c1, c2, c3);
             n1 = k[75];
@@ -107,7 +107,7 @@ public class Circle extends Tool implements Qualifyable {
             } else if (k[49] != 0) {
                 M[0] = k[50] / k[49];
             } else {
-                player.addChatMessage(new TextComponentString("The three points form a straight line. - x"));
+                player.sendMessage(new TextComponentString("The three points form a straight line. - x"));
                 err=true;
             }
 
@@ -124,7 +124,7 @@ public class Circle extends Tool implements Qualifyable {
             } else if (k[73] != 0) {
                 M[1] = k[74] / k[73];
             } else {
-                player.addChatMessage(new TextComponentString("The three points form a straight line. - y"));
+                player.sendMessage(new TextComponentString("The three points form a straight line. - y"));
                 err=true;
             }
 
@@ -141,13 +141,13 @@ public class Circle extends Tool implements Qualifyable {
             } else if (k[61] != 0) {
                 M[2] = k[62] / k[61];
             } else {
-                player.addChatMessage(new TextComponentString("The three points form a straight line. - z"));
+                player.sendMessage(new TextComponentString("The three points form a straight line. - z"));
                 err=true;
             }
 
             if(!err) {
 
-                player.addChatMessage(new TextComponentString("M(" + Math.round(M[0]) + "/" + Math.round(M[2]) + "/" + Math.round(M[1]) + ")"));
+                player.sendMessage(new TextComponentString("M(" + Math.round(M[0]) + "/" + Math.round(M[2]) + "/" + Math.round(M[1]) + ")"));
 
                 //w.getBlockAt((int) Math.round(M[0]), (int) Math.round(M[1]), (int) Math.round(M[2])).setType(Material.EMERALD_BLOCK);
                 if(ServerProxy.getWorld()!=null) {
@@ -174,15 +174,15 @@ public class Circle extends Tool implements Qualifyable {
                     double phi = 0;
 
                     double radius = Math.sqrt(Math.pow((a1-M[0]),2)+ Math.pow((a2-M[2]),2)+Math.pow((a3-M[1]),2));
-                    player.addChatMessage(new TextComponentString("Radius: " + radius));
+                    player.sendMessage(new TextComponentString("Radius: " + radius));
                     double umfang = 2 * Math.PI * radius;
-                    player.addChatMessage(new TextComponentString("Umfang: " + umfang));
+                    player.sendMessage(new TextComponentString("Umfang: " + umfang));
 
                     if(autoQuality) quality = (int)(Math.pow(umfang,2));
-                    player.addChatMessage(new TextComponentString("Quality: " + quality));
+                    player.sendMessage(new TextComponentString("Quality: " + quality));
 
                     double dphi = umfang/quality;
-                    player.addChatMessage(new TextComponentString("dphi: " + dphi));
+                    player.sendMessage(new TextComponentString("dphi: " + dphi));
 
                     List<BlockPos> seg1 = new ArrayList<BlockPos>();
                     List<BlockPos> seg2 = new ArrayList<BlockPos>();
@@ -202,7 +202,7 @@ public class Circle extends Tool implements Qualifyable {
                     short segmentation=0;
                     double fillfactor = 1;
                     double filldecrement = 1/(2.3*radius+1);
-                    if(fill)  player.addChatMessage(new TextComponentString("filldecrement: " + filldecrement));
+                    if(fill)  player.sendMessage(new TextComponentString("filldecrement: " + filldecrement));
                     boolean secondRound=false;
 
                     do {

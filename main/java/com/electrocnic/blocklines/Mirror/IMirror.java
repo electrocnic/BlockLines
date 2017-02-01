@@ -1,6 +1,7 @@
 package com.electrocnic.blocklines.Mirror;
 
-import com.sun.istack.internal.NotNull;
+import com.electrocnic.blocklines.Annotations.NotNull;
+import com.electrocnic.blocklines.Container.IDetailedBlockPos;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface IMirror {
      * @param toBeMirrored A list of blocks which are to be mirrored.
      * @return The new list, at least with the elements of the input list. Never null.
      */
-    @NotNull List<BlockPos> mirror(@NotNull List<BlockPos> toBeMirrored);
+    @NotNull List<IDetailedBlockPos> mirror(@NotNull List<IDetailedBlockPos> toBeMirrored) throws UnsupportedOperationException;
 
     /**
      * Sets the mirror-axis.
@@ -48,4 +49,51 @@ public interface IMirror {
      * @param active True: mirror will return extended list depending on axis, false: Mirror will return the input list.
      */
     void activateMirror(boolean active);
+
+    boolean isActive();
+
+    boolean toggleMirror();
+
+    boolean toggleVerticalMirror();
+
+    boolean toggleHorizontalMirror();
+
+    boolean toggleAutoReset();
+
+    boolean isAutoReset();
+
+    boolean toggleAutoRemove();
+
+    boolean isAutoRemove();
+
+    /**
+     * Sets the axis to odd.
+     * @return True, when odd.
+     */
+    boolean setOdd(boolean odd);
+
+    /**
+     * @return True, if axis is odd, false: even.
+     */
+    boolean isOdd();
+
+    /**
+     * This method should be invoked two times.
+     * The first invocation will set a, the second will set b of the mirror's axis.
+     * @param pos The position of the block in the world.
+     * @return True, if the selection is finished (selected b), false if a has been selected, but b is waiting for selection.
+     */
+    boolean performSelection(BlockPos pos);
+
+    /**
+     * Tells, whether the axis is valid, or a cube.
+     * @return False, if the axis is ok, true, if the axis is a cube.
+     */
+    boolean isInvalid();
+
+    /**
+     * Returns the selected Axis as a name (Either "Point", "Cube", "Plane" or "Line").
+     * @return The name.
+     */
+    String getAxisName();
 }

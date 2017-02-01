@@ -107,7 +107,7 @@ public abstract class Tool implements IFlag, ISelectable {
     @Override
     public void performSelection(BlockPos pos, EntityPlayer player) {
         selection.add(pos);
-        player.addChatMessage(new TextComponentString("Block has been added to your selection. Selected: " + selection.size()));
+        player.sendMessage(new TextComponentString("Block has been added to your selection. Selected: " + selection.size()));
         if(selection.size() == getSelectionCount()) {
             draw(player, selection, ServerProxy.getWorld().getBlockState(selection.get(0)));
             resetSelection();

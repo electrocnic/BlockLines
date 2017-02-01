@@ -27,14 +27,14 @@ public class ChangeMode implements ICommand {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if(args.length <= 1) {
-            sender.addChatMessage(new TextComponentString("Mode needs one of these arguments: line, ellipse, circle, cube."));
+            sender.sendMessage(new TextComponentString("Mode needs one of these arguments: line, ellipse, circle, cube."));
             return;
         }
         ICommand command = subcommands.get(args[1]);
         if(command != null) {
             command.execute(server,sender,args);
         }else {
-            sender.addChatMessage(new TextComponentString("Command with given argument does not exist."));
+            sender.sendMessage(new TextComponentString("Command with given argument does not exist."));
         }
     }
 

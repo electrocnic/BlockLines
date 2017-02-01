@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * -Save Generated stuff as templates
  * -Load Templates
  * -Allow copy-pasta... (Or look if world edit can do stuff like that... and look if it can duplicate stuff in a direction)
+ * -mirror existing buildings in the world?
  *
  *
  *
@@ -71,7 +72,7 @@ public class BlockLines {
     public void serverLoad(FMLServerStartingEvent event)
     {
         // register server commands
-        ServerProxy.setWorld(event.getServer().getEntityWorld());
+        ServerProxy.setWorld(event.getServer().getEntityWorld(), eventHandler);
         event.registerServerCommand(BlockLinesCommands.init(eventHandler));
     }
 }
