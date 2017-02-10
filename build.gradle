@@ -34,6 +34,7 @@ minecraft {
 }
 
 dependencies {
+    testCompile 'junit:junit:4.12'
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
@@ -54,6 +55,14 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ["test"]  // Note @Peter's comment below
+        }
+    }
 }
 
 processResources {

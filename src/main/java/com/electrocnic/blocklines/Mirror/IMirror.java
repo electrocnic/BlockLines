@@ -66,6 +66,14 @@ public interface IMirror {
 
     boolean isAutoRemove();
 
+    boolean hasJustToggledOn();
+
+    boolean isManuallySettingAxis();
+
+    void setJustToggledOn(boolean on);
+
+    void setManuallySettingAxis(boolean on);
+
     /**
      * Sets the axis to odd.
      * @return True, when odd.
