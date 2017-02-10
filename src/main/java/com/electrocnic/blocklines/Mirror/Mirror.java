@@ -14,7 +14,6 @@ import java.util.List;
 
 /**
  * Created by Andreas on 24.11.2016.
- * TODO: implement removal of blocks on destroy. it's necessary.
  */
 public class Mirror implements IMirror {
 
