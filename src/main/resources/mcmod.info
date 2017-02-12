@@ -1,0 +1,16 @@
+[
+{
+  "modid": "blocklines",
+  "name": "BlockLines",
+  "description": "Lines, Cubes, Circles, and most important: MIRRORS! You can select a mirror axis and interactively duplicate every hand-placed block with the mirror! Everything in creative mode makes more fun now!",
+  "version": "1.0",
+  "mcversion": "${1.11}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["ElectRocnic"],
+  "credits": "ElectRocnic, who made this mod. His maths teacher, who helped with the circle-maths. The forge-guys, for providing a great API with almost no documentation, but it was still fun developing this mod.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
