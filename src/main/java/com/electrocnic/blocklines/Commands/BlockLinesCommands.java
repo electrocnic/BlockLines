@@ -81,10 +81,14 @@ public class BlockLinesCommands extends CommandBase {
             sender.sendMessage(new TextComponentString(getUsage(sender)));
             return;
         }
-        try {
-            commands.get(args[0]).execute(server, sender, args);
-        }catch (Exception e) {
-            sender.sendMessage(new TextComponentString("This command does not exist. Maybe you forgot something? Mis-spelled?"));
+        if(args.length >= 1 && args[0].equalsIgnoreCase("help")) {
+            printHelpText(server, sender, args);
+        }else {
+            try {
+                commands.get(args[0]).execute(server, sender, args);
+            } catch (Exception e) {
+                sender.sendMessage(new TextComponentString("This command does not exist. Maybe you forgot something? Mis-spelled?"));
+            }
         }
     }
 
@@ -97,7 +101,6 @@ public class BlockLinesCommands extends CommandBase {
         commandFactory.addCommand(COMMAND_REDO, new Redo());
         commandFactory.addCommand(COMMAND_QUALITY, new Quality(eventHandler));
         commandFactory.addCommand(COMMAND_MIRROR, new MirrorCommand(eventHandler));
-        commandFactory.addCommand(COMMAND_HELP, commandFactory::printHelpText);
         commandFactory.addCommand(COMMAND_ACTIVATE, new Activate(eventHandler));
         commandFactory.addCommand(COMMAND_DEACTIVATE, new Deactivate(eventHandler));
 

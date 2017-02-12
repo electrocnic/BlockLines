@@ -1,0 +1,36 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+.git_old
+saves
+crash-reports
+logs
+forge-1.10.2-12.18.2.2099-changelog.txt
+forge-1.11-13.19.1.2199-changelog.txt
+MinecraftForge-Credits.txt
+Paulscode IBXM Library License.txt
+Paulscode SoundSystem CodecIBXM License.txt
+LICENSE-new.txt
+CREDITS-fml.txt
+screenshots
+usercache.json
+usernamecache.json

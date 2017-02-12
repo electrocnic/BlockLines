@@ -30,7 +30,6 @@ public class BlockLinesEventHandler implements ICommandEventListener {
     private Map<String, Tool> tools = null;
     private Map<String, IEventMethod> eventMethods = null;
     private IMirror mirror = null;
-    private boolean mirrorJustToggledOn = false;
 
     private short deStutter = 0;
     private String currentMode = Line.IDENTIFIER;
@@ -81,10 +80,11 @@ public class BlockLinesEventHandler implements ICommandEventListener {
             if (deStutter >= 1) deStutter = 0;
             else {
                 if (ServerProxy.getWorld() != null) {
-                    if(mirrorJustToggledOn&&(mirror.isAutoReset()||mirror.isInvalid())) {
+                    if(isMirrorAxisSelecting()) {
                         if(mirror != null) {
                             if(mirror.performSelection(event.getPos())) {
-                                mirrorJustToggledOn = false;
+                                mirror.setJustToggledOn(false);
+                                mirror.setManuallySettingAxis(false);
                                 event.getEntityPlayer().sendMessage(new TextComponentString("Mirror Axis selected: Mirror by " + mirror.getAxisName()));
                                 if(mirror.isInvalid()) {
                                     event.getEntityPlayer().sendMessage(new TextComponentString("Error: Axis cannot form a cube. You must either select a point (a=b), a line or a plane.\n" +
@@ -187,6 +187,10 @@ public class BlockLinesEventHandler implements ICommandEventListener {
         return "Selection reset.";
     }
 
+    private boolean isMirrorAxisSelecting() {
+        return (mirror.hasJustToggledOn()&&(mirror.isAutoReset()||mirror.isInvalid()))||mirror.isManuallySettingAxis();
+    }
+
     /**
      * Toggles mirror on of, if the arguments are empty.
      * Toggles horizontal or vertical mirror on or off if the argument is h or v.
@@ -195,8 +199,8 @@ public class BlockLinesEventHandler implements ICommandEventListener {
     private String mirrorSettings(Object arguments) {
         String args = (String) arguments;
         if(args==null || args.isEmpty() || args.equalsIgnoreCase(" ")) {
-            mirrorJustToggledOn = mirror.toggleMirror();
-            return "Toggled " + (mirrorJustToggledOn?"on":"off") + " mirror." + (mirrorJustToggledOn&&(mirror.isAutoReset()||mirror.isInvalid())?" Please select the mirror axis now.":"");
+            mirror.toggleMirror();
+            return "Toggled " + (mirror.isActive()?"on":"off") + " mirror." + (isMirrorAxisSelecting()?" Please select the mirror axis now.":"");
         }else if(args.equalsIgnoreCase("h")) {
             boolean on = mirror.toggleHorizontalMirror();
             return "Toggled horizontal mirror " + (on?"on.":"off.");
@@ -204,7 +208,7 @@ public class BlockLinesEventHandler implements ICommandEventListener {
             boolean on = mirror.toggleVerticalMirror();
             return "Toggled vertical mirror " + (on ? "on." : "off.");
         }else if(args.equalsIgnoreCase("s")) {
-            mirrorJustToggledOn = true;
+            mirror.setManuallySettingAxis(true);
             return "Please select the mirror axis now.";
         }else if(args.equalsIgnoreCase("autoreset")) {
             boolean on = mirror.toggleAutoReset();

@@ -14,7 +14,6 @@ import java.util.List;
 
 /**
  * Created by Andreas on 24.11.2016.
- * TODO: implement removal of blocks on destroy. it's necessary.
  */
 public class Mirror implements IMirror {
 
@@ -24,6 +23,8 @@ public class Mirror implements IMirror {
     private boolean aChanged = false;
     private boolean autoReset = false;
     private boolean autoRemove = true;
+    private boolean mirrorJustToggledOn = false;
+    private boolean mirrorManualSetAxis = false;
 
     /**
      * 0 xy
@@ -91,9 +92,14 @@ public class Mirror implements IMirror {
     @Override
     public boolean toggleMirror() {
         this.active = !this.active;
-        if(!this.active && autoReset) {
-            this.a = null;
-            this.b = null;
+        if(!this.active){
+            this.mirrorJustToggledOn = false;
+            if(autoReset) {
+                this.a = null;
+                this.b = null;
+            }
+        }else if(this.active) {
+            this.mirrorJustToggledOn = true;
         }
         return this.active;
     }
@@ -130,6 +136,26 @@ public class Mirror implements IMirror {
     @Override
     public boolean isAutoRemove() {
         return autoRemove;
+    }
+
+    @Override
+    public boolean hasJustToggledOn() {
+        return mirrorJustToggledOn;
+    }
+
+    @Override
+    public boolean isManuallySettingAxis() {
+        return mirrorManualSetAxis;
+    }
+
+    @Override
+    public void setJustToggledOn(boolean on) {
+        this.mirrorJustToggledOn = on;
+    }
+
+    @Override
+    public void setManuallySettingAxis(boolean on) {
+        this.mirrorManualSetAxis = on;
     }
 
     @Override
