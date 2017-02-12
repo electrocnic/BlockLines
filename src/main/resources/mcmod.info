@@ -3,7 +3,7 @@
   "modid": "blocklines",
   "name": "BlockLines",
   "description": "Lines, Cubes, Circles, and most important: MIRRORS! You can select a mirror axis and interactively duplicate every hand-placed block with the mirror! Everything in creative mode makes more fun now!",
-  "version": "${1.0}",
+  "version": "1.0",
   "mcversion": "${1.11}",
   "url": "",
   "updateUrl": "",
